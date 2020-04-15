@@ -4,7 +4,7 @@
 ![Documentation Status](https://readthedocs.org/projects/async-couch/badge/?version=latest)
 
 ## Resources
-    * [Documentation](https://async-couch.readthedocs.io/en/latest/)
+   * [Documentation](https://async-couch.readthedocs.io/en/latest/)
 
 > This is simple asynchronous python CouchDB client that works with
 > aiohttp, httpx and able to be adopted eassylly to any other http client.
