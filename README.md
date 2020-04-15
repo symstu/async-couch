@@ -3,11 +3,11 @@
 ![Logo](docs/source/_static/logo.jpg)
 ![Documentation Status](https://readthedocs.org/projects/async-couch/badge/?version=latest)
 
-# Resources
-    * `Documentation <https://async-couch.readthedocs.io/en/latest/>`_
+## Resources
+    * [Documentation](https://async-couch.readthedocs.io/en/latest/)
 
->> This is simple asynchronous python CouchDB client that works with
->> aiohttp, httpx and able to be adopted eassylly to any other http client.
+> This is simple asynchronous python CouchDB client that works with
+> aiohttp, httpx and able to be adopted eassylly to any other http client.
 
 ### Requirements:
    * >= Python 3.6
@@ -21,7 +21,7 @@
 pip install async-couch
 ```
 
-# Get Started
+### Get Started
 ```python
    import asyncio
 
@@ -46,6 +46,6 @@ pip install async-couch
       loop.run_until_complete(example(client, 'document_name'))
 ```
 
-##### ToDo
+### ToDo
 * Rest endpoints
 * Aiohttp adapter
