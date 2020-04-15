@@ -14,7 +14,7 @@ Async-Couch
 
 Resources
 #########
-   * `Documentation <https://async-couch.readthedocs.io/en/stable/>`_
+   * `Documentation <https://async-couch.readthedocs.io/en/latest/>`_
 
 This is simple asynchronous python CouchDB client that works with
 aiohttp, httpx and able to be adopted eassylly to any other http client.
@@ -36,6 +36,7 @@ How to install
 
 Get Started
 ############
+
 .. code-block:: python
    :linenos:
 
@@ -60,7 +61,6 @@ Get Started
       client = get_couch_client(request_adapter=HttpxCouchClient)
 
       loop.run_until_complete(example(client, 'document_name'))
-
 
 ToDo
 #####
