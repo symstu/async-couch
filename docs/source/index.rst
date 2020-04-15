@@ -48,7 +48,7 @@ Get Started
    import asyncio
 
    from async_couch import get_couch_client
-   from async_couchdb.http_clients import HttpxCouchClient
+   from async_couch.http_clients import HttpxCouchClient
 
 
    async def example(client, doc_id: str):
