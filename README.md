@@ -3,6 +3,7 @@
 ![Logo](docs/source/_static/logo.jpg)
 ![Documentation Status](https://readthedocs.org/projects/async-couch/badge/?version=latest)
 ![Python package](https://github.com/symstu/async-couch/workflows/Python%20package/badge.svg?branch=master)
+![Upload Python Package](https://github.com/symstu/async-couch/workflows/Upload%20Python%20Package/badge.svg?event=release)
 
 ## Resources
    * [Documentation](https://async-couch.readthedocs.io/en/latest/)
