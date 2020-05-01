@@ -14,6 +14,12 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/symstu/async-couchdb",
     packages=['async_couch'],
+    package_data={'async_couch': [
+        'clients/*',
+        'clients/*/*',
+        'http_clients/*',
+        'utils/*'
+    ]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
