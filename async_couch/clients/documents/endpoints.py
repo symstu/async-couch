@@ -1,7 +1,12 @@
+import json
+import typing
+
 from async_couch import types
 from async_couch.http_clients.base_client import BaseEndpoint
 from async_couch.clients.database.responses import DocumentCreated
 from async_couch.clients.documents import responses as resp
+from async_couch.utils.content_types import MultipartRelated, \
+    MultipartRelatedAttachment, multipart_boundary
 
 
 class DocEndpoint(BaseEndpoint):
@@ -181,7 +186,8 @@ class DocEndpoint(BaseEndpoint):
                                    doc: dict,
                                    rev: str = None,
                                    batch: str = None,
-                                   new_edits: bool = True) -> types.UniversalResponse:
+                                   new_edits: bool = True,
+                                   attachments: typing.List[MultipartRelatedAttachment] = None) -> types.UniversalResponse:
         """
         The PUT method creates a new named document, or creates a new
         revision of the existing document. Unlike the POST /{db}, you must
@@ -193,6 +199,10 @@ class DocEndpoint(BaseEndpoint):
 
         Parameters
         ----------
+        attachments: List[Attachment]
+            For bulk upload. In this case it should be sent as multipart
+            related
+
         db: str
             Database name
 
@@ -237,7 +247,7 @@ class DocEndpoint(BaseEndpoint):
         if not new_edits:
             query['new_edits'] = new_edits
 
-        return await self.http_client.make_request(
+        kwargs = dict(
             endpoint=self.__doc_endpoint__,
             method=types.HttpMethod.PUT,
             statuses={
@@ -251,9 +261,30 @@ class DocEndpoint(BaseEndpoint):
             },
             path={'db': db, 'doc_id': doc_id},
             query=query,
-            json_data=doc,
             response_model=resp.DocumentUpdatingResponse
         )
+
+        if not attachments:
+            kwargs['json_data'] = doc
+            return await self.http_client.make_request(**kwargs)
+
+        json_part = MultipartRelatedAttachment()
+        json_part.mime_type = b'application/json'
+
+        json_data = dict(_attachments=dict())
+        json_data.update(**doc)
+
+        for attachment in attachments:
+            attachment_name = attachment.name.decode()
+            json_data['_attachments'][attachment_name] = attachment.as_dict
+
+        json_part.data = json.dumps(json_data).encode()
+
+        content_type = f'multipart/related;boundary="{multipart_boundary[2:].decode()}"'
+        kwargs['data'] = MultipartRelated.dump([json_part] + attachments)
+        kwargs['headers'] = {'Content-Type': content_type}
+
+        return await self.http_client.make_request(**kwargs)
 
     async def doc_delete(self,
                          db: str,
