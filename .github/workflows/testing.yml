@@ -35,3 +35,10 @@ jobs:
       run: |
         pip install pytest
         pytest
+
+    - name: notify tests finished
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.SYMSTU_TG_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: "Testing ${{ github.repository }}: ${{ job.status }}"
