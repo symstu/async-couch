@@ -8,7 +8,7 @@
    * [Documentation](https://async-couch.readthedocs.io/en/latest/)
 
 > This is simple asynchronous python CouchDB client that works with
-> aiohttp, httpx and able to be adopted eassylly to any other http client.
+> aiohttp, httpx and able to be adopted easily to any other http client.
 
 ### Requirements:
    * >= Python 3.6
