@@ -6,18 +6,18 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="async-couch",
-    version="0.1a1",
+    version="0.1a5",
     author="Maksym Stukalo",
     author_email="stukalo.maksym@gmail.com",
     description="Asynchronous client for CouchDB",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/symstu/async-couchdb",
-    packages=setuptools.find_packages(),
+    packages=['async_couch'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.7.5',
+    python_requires='>=3.7',
 )
