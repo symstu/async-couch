@@ -3,10 +3,12 @@ import pytest
 from typing import Callable
 
 from async_couch import CouchClient, exc
+from async_couch.utils.content_types import MultipartRelatedAttachment
 
 
 db_name = 'test_document_endpoint'
 doc_name = 'test_doc'
+doc_with_attachments = 'test_doc_att'
 
 
 @pytest.fixture(autouse=True, scope='session')
@@ -51,6 +53,21 @@ def test_create(client: CouchClient, async_run: Callable):
     ))
     assert response.status_code == 202
     assert response.model.ok is True
+
+
+def test_create_with_attachments(client: CouchClient, async_run: Callable):
+    attachments = MultipartRelatedAttachment(
+        name=b'text', data=b'test_text', mime_type=b'text/plain')
+    response = async_run(client.doc_create_or_update(
+        db_name, doc_with_attachments, dict(val=-1), attachments=[attachments]
+    ))
+    assert response.status_code == 201
+    assert response.model.ok is True
+
+    response = async_run(client.doc_get(
+        db_name, doc_with_attachments, attachments=True))
+    assert response.status_code == 200
+    assert response.model._files[1].decode() == attachments.data
 
 
 def test_exists(client: CouchClient, async_run: Callable):

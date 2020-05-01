@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Callable, Dict, Any
 
 from async_couch import exc, types
+from async_couch.utils.content_types import MultipartRelated
 
 
 class BaseHttpClient(metaclass=abc.ABCMeta):
@@ -49,9 +50,16 @@ class BaseHttpClient(metaclass=abc.ABCMeta):
 
         response = self.to_universal_response(
             self.validate_response(result, statuses))
+        content_type = response.headers.get('content-type')
 
         if response_model:
-            response.model = response_model.load(response)
+            if content_type == 'application/json':
+                response.model = response_model.load(response)
+
+            elif content_type.startswith('multipart/related'):
+                decoded_attachments = list(MultipartRelated.load(response.data))
+                response.model = response_model.load(decoded_attachments[0])
+                response.model._files = decoded_attachments
 
         return response
 

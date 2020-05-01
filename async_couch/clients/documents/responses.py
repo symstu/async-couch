@@ -44,6 +44,9 @@ class DocumentDetailedResponse(EmptyResponse):
     # List of local revision tokens without. Available if requested with
     # revs=true query parameter
 
+    _files: dict = None
+    # Attachments files
+
     doc: typing.Dict[str, typing.Any] = None
 
     @classmethod
