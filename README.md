@@ -33,13 +33,13 @@ pip install async-couch
 
    async def example(client, doc_id: str):
       await client.db_create('test_index')
-      await client.doc_create_or_update('test_index', 'test_doc', dict(val=1))
+      await client.doc_create_or_update('test_index', doc_id, dict(val=1))
 
-      response = await client.doc_get('my_index', response.model._id)
-      assert response.model._id == 'test_doc'
+      response = await client.doc_get('test_index', response.model._id)
+      assert response.model._id == doc_id
 
       await client.attachment_upload(
-         'my_index', response.model._id, 'attachment_name', 'text/plain', b'\0')
+         'test_index', response.model._id, 'attachment_name', 'text/plain', b'\0')
 
    if __name__ == '__main__':
       loop = asyncio.get_event_loop()
