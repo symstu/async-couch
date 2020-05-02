@@ -2,18 +2,15 @@ import dataclasses
 
 
 @dataclasses.dataclass
-class CouchResponseError(Exception):
+class HttpError(Exception):
     """
-
+    Base Http Error
     """
     code: int
     message: bytes
 
-    def __str__(self):
-        return f'CouchDb response code {self.code}: {self.message}'
 
-
-class UnexpectedStatusCode(CouchResponseError):
+class UnexpectedStatusCode(HttpError):
     def __str__(self):
         return f'Unexpected status code {self.code} with message:' \
                f' {self.message}'

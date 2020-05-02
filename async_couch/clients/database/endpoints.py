@@ -128,10 +128,10 @@ class DatabaseEndpoint(BaseEndpoint):
             query={'q': q, 'n': n, 'partitioned': partitioned}
         )
 
-    async def db_crete_doc(self,
-                           db: str,
-                           doc: dict,
-                           batch: str = None) -> types.UniversalResponse:
+    async def db_create_doc(self,
+                            db: str,
+                            doc: dict,
+                            batch: str = None) -> types.UniversalResponse:
         """
         Creates a new document in the specified database, using the supplied
         JSON document structure. If the JSON structure includes the _id field,

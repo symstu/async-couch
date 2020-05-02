@@ -35,21 +35,20 @@ def test_create(client: CouchClient, async_run: Callable):
     ))
     assert response.status_code == 201
     assert response.model.ok is True
-
-    with pytest.raises(exc.CouchResponseError) as error:
-        async_run(client.doc_create_or_update(
-            db_name, doc_name, dict(val=2), rev='2342&###&&&(**88'
-        ))
-        assert error.code == 400
-
-    with pytest.raises(exc.CouchResponseError) as error:
-        async_run(client.doc_create_or_update(
-            db_name, doc_name, dict(val=2), rev='non_existing_revision'
-        ))
-        assert error.code == 404
+    _rev = response.model.rev
 
     response = async_run(client.doc_create_or_update(
-        db_name, doc_name, dict(val=2), rev=response.model.rev, batch='ok'
+        db_name, doc_name, dict(val=2), rev='2342&###&&&(**88'
+    ))
+    assert response.status_code == 400
+
+    response = async_run(client.doc_create_or_update(
+        db_name, doc_name, dict(val=2), rev='non_existing_revision'
+    ))
+    assert response.status_code == 400
+
+    response = async_run(client.doc_create_or_update(
+        db_name, doc_name, dict(val=2), rev=_rev, batch='ok'
     ))
     assert response.status_code == 202
     assert response.model.ok is True
@@ -74,9 +73,8 @@ def test_exists(client: CouchClient, async_run: Callable):
     response = async_run(client.doc_exists(db_name, doc_name))
     assert response.status_code == 200
 
-    with pytest.raises(exc.CouchResponseError) as error:
-        async_run(client.doc_exists(db_name, 'non_existing_doc'))
-        assert error.code == 404
+    response = async_run(client.doc_exists(db_name, 'non_existing_doc'))
+    assert response.status_code == 404
 
 
 def test_get(client: CouchClient, async_run: Callable):
@@ -94,13 +92,11 @@ def test_get(client: CouchClient, async_run: Callable):
     assert response.model._id == doc_name
     assert response.model.doc.get('val') == 2
 
-    with pytest.raises(exc.CouchResponseError) as error:
-        async_run(client.doc_get(db_name, 'invalid_%%%_name'))
-        assert error.code == 400
+    response = async_run(client.doc_get(db_name, 'invalid_%%%_name'))
+    assert response.status_code == 404
 
-    with pytest.raises(exc.CouchResponseError) as error:
-        async_run(client.doc_get(db_name, 'non_existing'))
-        assert error.code == 404
+    response = async_run(client.doc_get(db_name, 'non_existing'))
+    assert response.status_code == 404
 
 
 def test_copy(client: CouchClient, async_run: Callable):
@@ -123,10 +119,9 @@ def test_copy(client: CouchClient, async_run: Callable):
     # todo: returns 201 rather then 202
     # assert response.status_code == 202
 
-    with pytest.raises(exc.CouchResponseError) as error:
-        async_run(client.doc_copy(
-            db_name, 'non_existing', 'test_new_copy'))
-        assert error.code == 404
+    response = async_run(client.doc_copy(
+        db_name, 'non_existing', 'test_new_copy'))
+    assert response.status_code == 404
 
 
 def test_delete(client: CouchClient, async_run: Callable):
@@ -137,6 +132,5 @@ def test_delete(client: CouchClient, async_run: Callable):
     assert response.status_code == 200
     assert response.model.ok is True
 
-    with pytest.raises(exc.CouchResponseError) as error:
-        async_run(client.doc_delete(db_name, doc_name, doc.model._rev))
-        assert error.code == 404
+    response = async_run(client.doc_delete(db_name, doc_name, doc.model._rev))
+    assert response.status_code == 404

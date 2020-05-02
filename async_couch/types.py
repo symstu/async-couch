@@ -1,7 +1,7 @@
-import dataclasses
 import json
 import enum
 
+from dataclasses import dataclass
 from typing import Dict, Iterable
 
 
@@ -15,7 +15,7 @@ class HttpMethod(str, enum.Enum):
     COPY: str = 'copy'
 
 
-@dataclasses.dataclass
+@dataclass
 class UniversalResponse:
     status_code: int
     headers: Dict[str, str]
@@ -34,3 +34,9 @@ class EmptyResponse:
             return response
 
         return cls(**json.loads(response.data))
+
+
+@dataclass
+class CouchDbError(EmptyResponse):
+    error: str
+    reason: str

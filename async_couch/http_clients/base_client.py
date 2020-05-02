@@ -52,6 +52,10 @@ class BaseHttpClient(metaclass=abc.ABCMeta):
             self.validate_response(result, statuses))
         content_type = response.headers.get('content-type')
 
+        if response.status_code > 299:
+            response.model = types.CouchDbError.load(response)
+            return response
+
         if response_model:
             if content_type == 'application/json':
                 response.model = response_model.load(response)
@@ -69,7 +73,7 @@ class BaseHttpClient(metaclass=abc.ABCMeta):
 
         if not status:
             raise exc.UnexpectedStatusCode(
-                response.status_code, response.data)
+                response.status_code, response.content)
 
         return response
 
