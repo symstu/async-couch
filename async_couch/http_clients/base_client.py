@@ -65,15 +65,11 @@ class BaseHttpClient(metaclass=abc.ABCMeta):
 
     @staticmethod
     def validate_response(response: types.UniversalResponse, statutes: dict):
-        if response.status_code > 299:
-            raise exc.CouchResponseError(
-                response.status_code, response.content)
-
         status = statutes.get(response.status_code)
 
         if not status:
             raise exc.UnexpectedStatusCode(
-                response.status_code, response.content)
+                response.status_code, response.data)
 
         return response
 

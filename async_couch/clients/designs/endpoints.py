@@ -228,7 +228,7 @@ class DesignViewEndpoint(BaseEndpoint):
             query['inclusive_end'] = inclusive_end
 
         if key:
-            query['key'] = key
+            query['key'] = f'"{key}"'
 
         if keys:
             query['keys'] = keys
