@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="async-couch",
-    version="0.1a14",
+    version="0.1a15",
     author="Maksym Stukalo",
     author_email="stukalo.maksym@gmail.com",
     description="Asynchronous client for CouchDB",

@@ -213,26 +213,124 @@ class DatabaseEndpoint(BaseEndpoint):
             path={'db': db},
         )
 
-    async def db_all_docs(self, db: str, keys: typing.List[str] = None):
+    async def db_all_docs(self,
+                          db: str,
+                          conflicts: bool = False,
+                          descending: bool = False,
+                          end_key: dict = None,
+                          end_key_doc_id: str = None,
+                          group: bool = False,
+                          group_level: int = None,
+                          include_docs: bool = False,
+                          attachments: bool = False,
+                          att_encoding_info: bool = False,
+                          inclusive_end: bool = True,
+                          key: dict = None,
+                          keys: list = None,
+                          limit: int = None,
+                          reduce: bool = True,
+                          skip: int = 0,
+                          sort: bool = True,
+                          stable: bool = False,
+                          stale: str = None,
+                          start_key: dict = None,
+                          start_key_doc_id: str = None,
+                          update: bool = True,
+                          update_seq: bool = False) -> types.UniversalResponse:
         """
-        Executes the built-in _all_docs view, returning all of the documents
-        in the database. With the exception of the URL parameters (described
-        below), this endpoint works identically to any other view. Refer to
-        the view endpoint documentation for a complete description of the
-        available query parameters and the format of the returned data.
-
         POST _all_docs functionality supports identical parameters and
         behavior as specified in the GET /{db}/_all_docs API but allows for
         the query string parameters to be supplied as keys in a JSON object
         in the body of the POST request.
-
         Parameters
         ----------
-        keys: typing.List[str]
-            doc id
-
-        db: str
+        db
             Database name
+
+        conflicts: bool = False
+            Include conflicts information in response. Ignored if
+            include_docs isn’t true
+
+        descending: bool = False
+            Return the documents in descending order by key
+
+        end_key: dict = None
+            Stop returning records when the specified key is reached
+
+        end_key_doc_id: str = None
+            Alias for endkey_docid
+
+        group: bool = False
+            Group the results using the reduce function to a group or single
+            row. Implies reduce is true and the maximum group_level
+
+        group_level: int = None
+            Specify the group level to be used. Implies group is true
+
+        include_docs: bool = False
+            Include the associated document with each row
+
+        attachments: bool = False
+            Include the Base64-encoded content of attachments in the documents
+            that are included if include_docs is true. Ignored if
+            include_docs isn’t true.
+
+        att_encoding_info: bool = False
+            Include encoding information in attachment stubs if
+            include_docs is true and the particular attachment is
+            compressed. Ignored if include_docs isn’t true
+
+        inclusive_end: bool = False
+            Specifies whether the specified end key should be included in
+            the result
+
+        key: dict = None
+            Return only documents that match the specified key
+
+        keys: list = None
+            Return only documents where the key matches one of the keys
+            specified in the array
+
+        limit: int = None
+            Limit the number of the returned documents to the specified number
+
+        reduce: bool = True
+             Use the reduction function. Default is true when a reduce
+             function is defined
+
+        skip: int = 0
+            Skip this number of records before starting to return the results
+
+        sort: bool = False
+            Sort returned rows (see Sorting Returned Rows). Setting this to
+            false offers a performance boost. The total_rows and offset
+            fields are not available when this is set to false.
+
+        stable: bool = False
+            Whether or not the view results should be returned from a
+            stable set of shards
+
+        stale: str = None
+            Allow the results from a stale view to be used. Supported values:
+            ok, update_after and false. ok is equivalent to
+            stable=true&update=false. update_after is equivalent to
+            stable=true&update=lazy. false is equivalent to
+            stable=false&update=true
+
+        start_key: dict = None
+            Return records starting with the specified key.
+
+        start_key_doc_id: str = None
+            Return records starting with the specified document ID.
+            Ignored if startkey is not set
+
+        update: bool = True
+            Whether or not the view in question should be updated prior to
+            responding to the user. Supported values: true, false, lazy
+
+        update_seq: bool = False
+            Whether to include in the response an update_seq value indicating
+            the sequence id of the database the view reflects
 
         Returns
         ----------
@@ -244,19 +342,86 @@ class DatabaseEndpoint(BaseEndpoint):
         exc.CouchResponseError:
             If server error occurred
         """
-        if not keys:
-            keys = []
+        query = dict()
 
-        json_data = dict(keys=keys)
+        if conflicts:
+            query['conflicts'] = conflicts
+
+        if descending:
+            query['descending'] = descending
+
+        if end_key:
+            query['end_key'] = end_key
+
+        if end_key_doc_id:
+            query['end_key_doc_id'] = end_key_doc_id
+
+        if group:
+            query['group'] = group
+
+        if group_level:
+            query['group_level'] = group_level
+
+        if include_docs:
+            query['include_docs'] = include_docs
+
+        if attachments:
+            query['attachments'] = attachments
+
+        if att_encoding_info:
+            query['att_encoding_info'] = att_encoding_info
+
+        if not inclusive_end:
+            query['inclusive_end'] = inclusive_end
+
+        if limit:
+            query['limit'] = limit
+
+        if not reduce:
+            query['reduce'] = reduce
+
+        if skip:
+            query['skip'] = skip
+
+        if not sort:
+            query['sorted'] = sort
+
+        if stable:
+            query['stable'] = stable
+
+        if stale:
+            query['stale'] = stale
+
+        if start_key:
+            query['start_key'] = start_key
+
+        if start_key_doc_id:
+            query['start_key_doc_id'] = start_key_doc_id
+
+        if update != 'true':
+            query['update'] = update
+
+        if update_seq:
+            query['update_seq'] = update_seq
+
+        json_data = dict()
+
+        if key:
+            json_data['key'] = f'"{key}"'
+        elif keys:
+            json_data['keys'] = keys
 
         return await self.http_client.make_request(
             endpoint='/{db}/_all_docs',
             method=types.HttpMethod.POST,
             statuses={
                 200: 'Request completed successfully',
-                404: 'Requested database not found'
+                400: 'Invalid request',
+                401: 'Read privilege required',
+                404: 'Specified database, design document or view is missed'
             },
-            json_data=json_data,
+            query=query,
             path={'db': db},
+            json_data=json_data,
             response_model=ExecuteViewResponse
         )
