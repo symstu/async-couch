@@ -1,3 +1,5 @@
+import typing
+
 from async_couch import types
 from async_couch.clients.designs.responses import ExecuteViewResponse
 from async_couch.http_clients.base_client import BaseEndpoint
@@ -211,7 +213,7 @@ class DatabaseEndpoint(BaseEndpoint):
             path={'db': db},
         )
 
-    async def db_all_docs(self, db: str):
+    async def db_all_docs(self, db: str, keys: typing.List[str] = None):
         """
         Executes the built-in _all_docs view, returning all of the documents
         in the database. With the exception of the URL parameters (described
@@ -219,8 +221,16 @@ class DatabaseEndpoint(BaseEndpoint):
         the view endpoint documentation for a complete description of the
         available query parameters and the format of the returned data.
 
+        POST _all_docs functionality supports identical parameters and
+        behavior as specified in the GET /{db}/_all_docs API but allows for
+        the query string parameters to be supplied as keys in a JSON object
+        in the body of the POST request.
+
         Parameters
         ----------
+        keys: typing.List[str]
+            doc id
+
         db: str
             Database name
 
@@ -234,13 +244,19 @@ class DatabaseEndpoint(BaseEndpoint):
         exc.CouchResponseError:
             If server error occurred
         """
+        if not keys:
+            keys = []
+
+        json_data = dict(keys=keys)
+
         return await self.http_client.make_request(
             endpoint='/{db}/_all_docs',
-            method=types.HttpMethod.GET,
+            method=types.HttpMethod.POST,
             statuses={
                 200: 'Request completed successfully',
                 404: 'Requested database not found'
             },
+            json_data=json_data,
             path={'db': db},
             response_model=ExecuteViewResponse
         )

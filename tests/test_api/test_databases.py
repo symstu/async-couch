@@ -1,13 +1,12 @@
-import pytest
-
 from typing import Callable
 
-from async_couch import CouchClient, exc
+from async_couch import CouchClient
 
 
 db_name = 'test_db_01'
 invalid_db_name = 'invalid_%^^&_name'
 non_existing_db = 'non_existing_database'
+doc_id = None
 
 
 def test_create(async_run: Callable, client: CouchClient):
@@ -31,10 +30,13 @@ def test_existing(async_run: Callable, client: CouchClient):
 
 
 def test_create_doc(async_run: Callable, client: CouchClient):
+    global doc_id
     doc = dict(test=True)
 
     response = async_run(client.db_create_doc(db_name, doc))
     assert response.status_code == 201
+
+    doc_id = response.model.id
 
     response = async_run(client.db_create_doc(db_name, doc, batch='ok'))
     assert response.status_code == 202
@@ -44,11 +46,9 @@ def test_create_doc(async_run: Callable, client: CouchClient):
 
 
 def test_all_docs(async_run: Callable, client: CouchClient):
-    response = async_run(client.db_all_docs(db_name))
+    response = async_run(client.db_all_docs(db_name, keys=[doc_id]))
     assert response.status_code == 200
-
-    # on github CI this value is equal 2
-    assert response.model.total_rows > 1
+    assert response.model.total_rows == 1
 
 
 def test_delete(async_run: Callable, client: CouchClient):
