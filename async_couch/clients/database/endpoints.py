@@ -167,7 +167,7 @@ class DatabaseEndpoint(BaseEndpoint):
                 202: 'Document data accepted, but not yet stored on disk',
                 400: 'Invalid database name',
                 401: 'Write privileges required',
-                404: 'Database doesn’t exist',
+                404: 'Database does not exist',
                 409: 'A Conflicting Document with same ID already exists'
             },
             path={'db': db},

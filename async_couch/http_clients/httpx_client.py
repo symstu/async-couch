@@ -27,7 +27,7 @@ class HttpxCouchClient(BaseHttpClient, httpx.AsyncClient):
             params=query
         )
 
-        if json_data:
+        if isinstance(json_data, dict):
             request['json'] = json_data
         elif data:
             request['data'] = data
