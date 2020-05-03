@@ -58,7 +58,7 @@ class DesignInfoResponse(EmptyResponse):
     """View Index Information"""
 
 
-@classmethod
+@dataclass
 class ExecuteViewRow:
     id: str
     key: str
