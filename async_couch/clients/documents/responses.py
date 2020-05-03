@@ -1,16 +1,17 @@
-import dataclasses
 import typing
+
+from dataclasses import dataclass
 
 from async_couch.types import EmptyResponse
 
 
-@dataclasses.dataclass
+@dataclass
 class DocumentExistingResponse(EmptyResponse):
     e_tag: str
     # Document’s revision token
 
 
-@dataclasses.dataclass
+@dataclass
 class DocumentDetailedResponse(EmptyResponse):
     _id: str = None
     # Document ID
@@ -67,7 +68,7 @@ class DocumentDetailedResponse(EmptyResponse):
         return cls(**params)
 
 
-@dataclasses.dataclass
+@dataclass
 class DocumentUpdatingResponse(EmptyResponse):
     id: str = None
     # Document ID
@@ -77,4 +78,3 @@ class DocumentUpdatingResponse(EmptyResponse):
 
     rev: str = None
     # Revision MVCC token
-

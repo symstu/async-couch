@@ -1,4 +1,5 @@
 from async_couch import types
+from async_couch.clients.designs.responses import ExecuteViewResponse
 from async_couch.http_clients.base_client import BaseEndpoint
 from . import responses as resp
 
@@ -208,4 +209,38 @@ class DatabaseEndpoint(BaseEndpoint):
                 404: 'Database doesn’t exist or invalid database name'
             },
             path={'db': db},
+        )
+
+    async def db_all_docs(self, db: str):
+        """
+        Executes the built-in _all_docs view, returning all of the documents
+        in the database. With the exception of the URL parameters (described
+        below), this endpoint works identically to any other view. Refer to
+        the view endpoint documentation for a complete description of the
+        available query parameters and the format of the returned data.
+
+        Parameters
+        ----------
+        db: str
+            Database name
+
+        Returns
+        ----------
+        `UniversalResponse`
+            Operating result
+
+        Raises
+        ----------
+        exc.CouchResponseError:
+            If server error occurred
+        """
+        return await self.http_client.make_request(
+            endpoint='/{db}/_all_docs',
+            method=types.HttpMethod.GET,
+            statuses={
+                200: 'Request completed successfully',
+                404: 'Requested database not found'
+            },
+            path={'db': db},
+            response_model=ExecuteViewResponse
         )

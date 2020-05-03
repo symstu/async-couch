@@ -43,6 +43,12 @@ def test_create_doc(async_run: Callable, client: CouchClient):
     assert response.status_code == 404
 
 
+def test_all_docs(async_run: Callable, client: CouchClient):
+    response = async_run(client.db_all_docs(db_name))
+    assert response.status_code == 200
+    assert response.model.total_rows == 1
+
+
 def test_delete(async_run: Callable, client: CouchClient):
     response = async_run(client.db_delete(db_name))
     assert response.status_code == 200
