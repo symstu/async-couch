@@ -1,3 +1,5 @@
+import typing
+
 from dataclasses import dataclass
 from async_couch.types import EmptyResponse
 
@@ -56,16 +58,23 @@ class DesignInfoResponse(EmptyResponse):
     """View Index Information"""
 
 
+@classmethod
+class ExecuteViewRow:
+    id: str
+    key: str
+    value: dict
+
+
 @dataclass
 class ExecuteViewResponse(EmptyResponse):
-    offset: int
+    offset: int = None
     """Offset where the document list started"""
 
-    rows: list
+    rows: typing.List[ExecuteViewRow] = None
     """Array of view row objects. By default the information returned 
     contains only the document ID and revision"""
 
-    total_rows: int
+    total_rows: int = None
     """Number of documents in the database/view"""
 
     update_seq: dict = None
