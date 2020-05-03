@@ -48,7 +48,7 @@ def test_create_doc(async_run: Callable, client: CouchClient):
 def test_all_docs(async_run: Callable, client: CouchClient):
     response = async_run(client.db_all_docs(db_name, keys=[doc_id]))
     assert response.status_code == 200
-    assert response.model.total_rows == 1
+    assert len(response.model.rows) == 1
 
 
 def test_delete(async_run: Callable, client: CouchClient):
