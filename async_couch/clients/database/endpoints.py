@@ -440,8 +440,7 @@ class DatabaseEndpoint(BaseEndpoint):
                              skip: int = 0,
                              start_key: str = None,
                              start_key_doc_id: str = None,
-                             update_seq: bool = False) -> \
-            types.UniversalResponse:
+                             update_seq: bool = False) -> types.UniversalResponse:
         """
         POST _all_docs functionality supports identical parameters and behavior
         as specified in the GET /{db}/_all_docs API but allows for the query
