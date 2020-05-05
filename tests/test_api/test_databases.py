@@ -51,6 +51,12 @@ def test_all_docs(async_run: Callable, client: CouchClient):
     assert len(response.model.rows) == 1
 
 
+def test_design_docs(async_run: Callable, client: CouchClient):
+    response = async_run(client.db_design_docs(db_name, keys=[doc_id]))
+    assert response.status_code == 200
+    assert len(response.model.rows) == 1
+
+
 def test_delete(async_run: Callable, client: CouchClient):
     response = async_run(client.db_delete(db_name))
     assert response.status_code == 200
@@ -60,3 +66,6 @@ def test_delete(async_run: Callable, client: CouchClient):
 
     response = async_run(client.db_delete(non_existing_db))
     assert response.status_code == 404
+
+
+
