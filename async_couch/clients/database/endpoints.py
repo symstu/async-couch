@@ -549,6 +549,58 @@ class DatabaseEndpoint(BaseEndpoint):
             response_model=ExecuteViewResponse
         )
 
+    async def db_bulk_get(self,
+                          db: str,
+                          revs: bool = None,
+                          id: int = None) -> types.UniversalResponse:
+        """
+        This method can be called to query several documents in bulk. It is
+        well suited for fetching a specific revision of documents, as
+        replicators do for example, or for getting revision history.
+        --------------------------
 
+        db
+            Database name
+
+        revs: bool = None
+            Give the revisions history
+
+        Returns
+        ----------
+        `UniversalResponse`
+            Operating result
+
+        Raises
+        ----------
+        exc.CouchResponseError:
+            If server error occurred
+        """
+
+        query = dict()
+
+        if revs:
+            query['revs'] = revs
+
+        result = dict()
+
+        if id:
+            result['id'] = id
+
+        return await self.http_client.make_request(
+            endpoint='/db/_bulk_get',
+            method=types.HttpMethod.POST,
+            statuses={
+                200: 'Request completed successfully',
+                400: 'The request provided invalid JSON data or invalid '
+                     'query parameter',
+                401: 'Read permission required',
+                404: 'Invalid database name',
+                415: 'Bad Content-Type value'
+            },
+            query=query,
+            path={'db': db},
+            json_data=result,
+            response_model=ExecuteViewResponse
+        )
 
 
