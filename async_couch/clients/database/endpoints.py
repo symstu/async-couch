@@ -425,3 +425,370 @@ class DatabaseEndpoint(BaseEndpoint):
             json_data=json_data,
             response_model=ExecuteViewResponse
         )
+
+    async def db_design_docs(self,
+                             db: str,
+                             conflicts: bool = False,
+                             descending: bool = False,
+                             end_key: str = None,
+                             end_key_doc_id: str = None,
+                             include_docs: bool = False,
+                             inclusive_end: bool = True,
+                             key: str = None,
+                             keys: str = None,
+                             limit: int = None,
+                             skip: int = 0,
+                             start_key: str = None,
+                             start_key_doc_id: str = None,
+                             update_seq: bool = False) -> types.UniversalResponse:
+        """
+        POST _all_docs functionality supports identical parameters and behavior
+        as specified in the GET /{db}/_all_docs API but allows for the query
+        string parameters to be supplied as keys in a JSON object in the body
+        of the POST request.
+        -------------------
+
+        db
+            Database name
+
+        conflict: bool = false
+            Includes conflicts information in response. Ignored if include_docs
+             isn’t true.
+
+        end_key: str = none
+            Stop returning records when the specified design document ID is
+            reached.
+
+        end_key_doc_id: str = none
+            Stop returning records when the specified design document ID is
+            reached.
+
+        include_docs: bool = false
+            Include the full content of the design documents in the return.
+
+        inclusive_end: bool = true
+            Specifies whether the specified end key should be included in the
+            result.
+
+        key: str = none
+            Return only design documents that match the specified key.
+
+        keys: str = none
+            Return only design documents that match the specified keys.
+
+        limit: int = none
+            Limit the number of the returned design documents to the specified
+            number.
+
+        skip: int = 0
+            Skip this number of records before starting to return the results.
+
+        start_key: str = none
+            Return records starting with the specified key.
+
+        start_key_doc_id: str = none
+             Return records starting with the specified design document ID.
+
+        update_seq: bool = false
+            Response includes an update_seq value indicating which sequence id
+            of the underlying database the view reflects.
+
+        Returns
+        ----------
+        `UniversalResponse`
+            Operating result
+
+        Raises
+        ----------
+        exc.CouchResponseError:
+            If server error occurred
+        """
+
+        query = dict()
+
+        if conflicts:
+            query['conflicts'] = conflicts
+        if descending:
+            query['descending'] = descending
+        if end_key:
+            query['end_key'] = end_key
+        if end_key_doc_id:
+            query['end_key_doc_id'] = end_key_doc_id
+        if include_docs:
+            query['include_docs'] = include_docs
+        if not inclusive_end:
+            query['inclusive_end'] = inclusive_end
+        if limit:
+            query['limit'] = limit
+        if skip:
+            query['slip'] = skip
+        if start_key:
+            query['start_key'] = start_key
+        if start_key_doc_id:
+            query['start_key_doc_id'] = start_key_doc_id
+        if update_seq:
+            query['update_seq'] = update_seq
+
+        json_data = dict()
+
+        if key:
+            json_data['key'] = f'{key}'
+        elif keys:
+            json_data['keys'] = keys
+
+        return await self.http_client.make_request(
+            endpoint='/{db}/_design_docs',
+            method=types.HttpMethod.POST,
+            statuses={
+                200: 'Request completed successfully',
+                404: 'Requested database not found'
+            },
+            query=query,
+            path={'db': db},
+            json_data=json_data,
+            response_model=ExecuteViewResponse
+        )
+
+    async def db_bulk_get(self,
+                          db: str,
+                          revs: bool = None,
+                          id: int = None) -> types.UniversalResponse:
+        """
+        This method can be called to query several documents in bulk. It is
+        well suited for fetching a specific revision of documents, as
+        replicators do for example, or for getting revision history.
+        --------------------------
+
+        db
+            Database name
+
+        revs: bool = None
+            Give the revisions history
+
+        Returns
+        ----------
+        `UniversalResponse`
+            Operating result
+
+        Raises
+        ----------
+        exc.CouchResponseError:
+            If server error occurred
+        """
+
+        query = dict()
+
+        if revs:
+            query['revs'] = revs
+
+        result = dict()
+
+        if id:
+            result['id'] = id
+
+        return await self.http_client.make_request(
+            endpoint='/db/_bulk_get',
+            method=types.HttpMethod.POST,
+            statuses={
+                200: 'Request completed successfully',
+                400: 'The request provided invalid JSON data or invalid '
+                     'query parameter',
+                401: 'Read permission required',
+                404: 'Invalid database name',
+                415: 'Bad Content-Type value'
+            },
+            query=query,
+            path={'db': db},
+            json_data=result,
+            response_model=ExecuteViewResponse
+        )
+
+    async def db_bulk_docs(self,
+                           db: str,
+                           docs: list,
+                           new_edits: bool=True) -> types.UniversalResponse:
+
+        """
+        The bulk document API allows you to create and update multiple
+        documents at the same time within a single request. The basic operation
+        is similar to creating or updating a single document, except that you
+        batch the document structure and information.
+        When creating new documents the document ID (_id) is optional.
+        For updating existing documents, you must provide the document ID,
+        revision information (_rev), and new document values.
+        In case of batch deleting documents all fields as document ID, revision information and deletion status (_deleted) are required.
+        ----------------
+
+        db
+            Database name
+
+        docs: list
+            List of document objects
+
+        new_edits: bool=True
+            If false, prevents the database from assigning them new revision
+            IDs
+
+        Returns
+        ----------
+        `UniversalResponse`
+            Operating result
+
+        Raises
+        ----------
+        exc.CouchResponseError:
+            If server error occurred
+        """
+
+        query = dict()
+
+        if docs:
+            query['docs'] = docs
+        if new_edits:
+            query['new_edits'] = new_edits
+
+        return await self.http_client.make_request(
+            endpoint='/db/_bulk_docs',
+            method=types.HttpMethod.POST,
+            statuses={
+                201: 'Document(s) have been created or updated',
+                401: 'The request provided invalid JSON data',
+                404: 'Requested database not found'
+            },
+            query=query,
+            path={'db': db},
+            response_model=ExecuteViewResponse
+        )
+
+    async def db_find(self,
+                      db: str,
+                      selector: dict,
+                      limit: int = 25,
+                      skip: int = None,
+                      sort: dict = None,
+                      fields: dict = None,
+                      use_index: dict = None,
+                      r: int = 1,
+                      bookmark: str = None,
+                      update: bool = True,
+                      stable: bool = None,
+                      stale: str = None,
+                      execution_stats: bool = False) -> ExecuteViewResponse:
+
+        """
+        Find documents using a declarative JSON querying syntax. Queries can
+        use the built-in _all_docs index or custom indexes, specified using the
+         _index endpoint.
+        ------------------------
+
+        db
+            Database name
+
+        selector: dict
+             JSON object describing criteria used to select documents. More
+             information provided in the section on selector syntax. Required
+
+        limit: int = 25
+            Maximum number of results returned.
+
+        skip: int = None
+            Skip the first ‘n’ results, where ‘n’ is the value specified.
+
+        sort: dict = None
+            JSON array following sort syntax.
+
+        fields: dict = None
+            JSON array specifying which fields of each object should be
+            returned. If it is omitted, the entire object is returned. More
+            information provided in the section on filtering fields.
+
+        use_index: dict = None
+             Instruct a query to use a specific index. Specified either as
+             "<design_document>" or ["<design_document>", "<index_name>"].
+
+        r: int = 1
+            Read quorum needed for the result. This defaults to 1, in which
+            case the document found in the index is returned. If set to a
+            higher value, each document is read from at least that many
+            replicas before it is returned in the results. This is likely to
+            take more time than using only the document stored locally with
+            the index.
+
+        bookmark: str = None
+            A string that enables you to specify which page of results you
+            require. Used for paging through result sets. Every query returns
+            an opaque string under the bookmark key that can then be passed
+            back in a query to get the next page of results. If any part of the
+            selector query changes between requests, the results are undefined.
+
+        update: bool = True
+            Whether to update the index prior to returning the result.
+
+        stable: bool = None
+            Whether or not the view results should be returned from a “stable”
+            set of shards.
+
+        stale: str = None
+            Combination of update=false and stable=true options. Possible
+            options: "ok", false (default).
+
+        execution_stats: bool = False
+            Include execution statistics in the query response.
+
+        Returns
+        ----------
+        `UniversalResponse`
+            Operating result
+
+        Raises
+        ----------
+        exc.CouchResponseError:
+            If server error occurred
+        """
+
+        query = dict()
+
+        if limit:
+            query['limit'] = limit
+        if skip:
+            query['skip'] = skip
+        if sort:
+            query['sort'] = sort
+        if fields:
+            query['fields'] = fields
+        if use_index:
+            query['use_index'] = use_index
+        if r:
+            query['r'] = r
+        if bookmark:
+            query['bookmark'] = bookmark
+        if update:
+            query['update'] = update
+        if stable:
+            query['stable'] = stable
+        if stale:
+            query['stale'] = stale
+        if execution_stats:
+            query['execution_stats'] = execution_stats
+
+        json_data = dict()
+
+        if selector:
+            json_data['selector'] = selector
+
+        return await self.http_client.make_request(
+            endpoint='/db/_find',
+            method=types.HttpMethod.POST,
+            statuses={
+                200: 'Request completed successfully',
+                400: 'Invalid request',
+                401: 'Read permission required',
+                404: 'Requested database not found',
+                500: 'Query execution error'
+            },
+            query=query,
+            path={'db': db},
+            json_data=json_data,
+            response_model=ExecuteViewResponse
+        )
+
