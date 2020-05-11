@@ -57,6 +57,11 @@ def test_design_docs(async_run: Callable, client: CouchClient):
     assert len(response.model.rows) == 1
 
 
+def test_bulk_get(async_run: Callable, client: CouchClient):
+    response = async_run(client.db_bulk_get(db_name, id=[doc_id]))
+    assert response.status_code == 200
+
+
 def test_delete(async_run: Callable, client: CouchClient):
     response = async_run(client.db_delete(db_name))
     assert response.status_code == 200
