@@ -58,8 +58,18 @@ def test_design_docs(async_run: Callable, client: CouchClient):
 
 
 def test_bulk_get(async_run: Callable, client: CouchClient):
-    response = async_run(client.db_bulk_get(db_name, id=[doc_id]))
+    response = async_run(client.db_bulk_get(db_name, docs=[doc_id]))
     assert response.status_code == 200
+
+
+#def test_bulk_docs(async_run: Callable, client: CouchClient):
+    #response = async_run(client.db_bulk_docs(db_name, docs=[doc_id]))
+    #assert response.status_code == 200
+
+
+#def test_find(async_run: Callable, client: CouchClient):
+    #response = async_run(client.db_find(db_name, selector=[doc_id]))
+    #assert response.status_code == 200
 
 
 def test_delete(async_run: Callable, client: CouchClient):
