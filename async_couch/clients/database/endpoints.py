@@ -538,7 +538,7 @@ class DatabaseEndpoint(BaseEndpoint):
             json_data['keys'] = keys
 
         return await self.http_client.make_request(
-            endpoint=f'/{db}/_design_docs',
+            endpoint='/{db}/_design_docs',
             method=types.HttpMethod.POST,
             statuses={
                 200: 'Request completed successfully',
@@ -586,7 +586,7 @@ class DatabaseEndpoint(BaseEndpoint):
         json_data['docs'] = [item.dump() for item in docs]
 
         return await self.http_client.make_request(
-            endpoint=f'/{db}/_bulk_get',
+            endpoint='/{db}/_bulk_get',
             method=types.HttpMethod.POST,
             statuses={
                 200: 'Request completed successfully',
@@ -647,7 +647,7 @@ class DatabaseEndpoint(BaseEndpoint):
         json_data['docs'] = [item.dump() for item in docs]
 
         return await self.http_client.make_request(
-            endpoint=f'/{db}/_bulk_docs',
+            endpoint='/{db}/_bulk_docs',
             method=types.HttpMethod.POST,
             statuses={
                 201: 'Document(s) have been created or updated',
