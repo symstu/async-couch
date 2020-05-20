@@ -4,6 +4,7 @@ from async_couch import types
 from async_couch.clients.designs.responses import ExecuteViewResponse
 from async_couch.http_clients.base_client import BaseEndpoint
 from . import responses as resp
+from . import models
 
 
 class DatabaseEndpoint(BaseEndpoint):
@@ -537,7 +538,7 @@ class DatabaseEndpoint(BaseEndpoint):
             json_data['keys'] = keys
 
         return await self.http_client.make_request(
-            endpoint='/{db}/_design_docs',
+            endpoint=f'/{db}/_design_docs',
             method=types.HttpMethod.POST,
             statuses={
                 200: 'Request completed successfully',
@@ -551,8 +552,8 @@ class DatabaseEndpoint(BaseEndpoint):
 
     async def db_bulk_get(self,
                           db: str,
-                          revs: bool = None,
-                          docs: dict = None) -> types.UniversalResponse:
+                          docs: typing.List[models.Doc],
+                          revs: bool = None) -> types.UniversalResponse:
         """
         This method can be called to query several documents in bulk. It is
         well suited for fetching a specific revision of documents, as
@@ -582,12 +583,10 @@ class DatabaseEndpoint(BaseEndpoint):
             query['revs'] = revs
 
         json_data = dict()
-
-        if docs:
-            json_data['docs'] = f'{docs}'
+        json_data['docs'] = [item.dump() for item in docs]
 
         return await self.http_client.make_request(
-            endpoint='/{db}/_bulk_get',
+            endpoint=f'/{db}/_bulk_get',
             method=types.HttpMethod.POST,
             statuses={
                 200: 'Request completed successfully',
@@ -605,7 +604,7 @@ class DatabaseEndpoint(BaseEndpoint):
 
     async def db_bulk_docs(self,
                            db: str,
-                           docs: list = None,
+                           docs: typing.List[models.ExtendedDoc],
                            new_edits: bool = True) -> types.UniversalResponse:
 
         """
@@ -641,14 +640,14 @@ class DatabaseEndpoint(BaseEndpoint):
         """
 
         query = dict()
-
-        if docs:
-            query['docs'] = docs
         if new_edits:
             query['new_edits'] = new_edits
 
+        json_data = dict()
+        json_data['docs'] = [item.dump() for item in docs]
+
         return await self.http_client.make_request(
-            endpoint='/{db}/_bulk_docs',
+            endpoint=f'/{db}/_bulk_docs',
             method=types.HttpMethod.POST,
             statuses={
                 201: 'Document(s) have been created or updated',
@@ -656,6 +655,7 @@ class DatabaseEndpoint(BaseEndpoint):
                 404: 'Requested database not found'
             },
             query=query,
+            json_data=json_data,
             path={'db': db},
             response_model=ExecuteViewResponse
         )

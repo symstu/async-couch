@@ -1,6 +1,7 @@
 from typing import Callable
 
 from async_couch import CouchClient
+from async_couch.clients.database import models as db_models
 
 
 db_name = 'test_db_01'
@@ -52,19 +53,22 @@ def test_all_docs(async_run: Callable, client: CouchClient):
 
 
 def test_design_docs(async_run: Callable, client: CouchClient):
+    # todo: type of keys is invalid
     response = async_run(client.db_design_docs(db_name, keys=[doc_id]))
     assert response.status_code == 200
     assert len(response.model.rows) == 1
 
 
-def test_bulk_get(async_run: Callable, client: CouchClient):
-    response = async_run(client.db_bulk_get(db_name, docs=[doc_id]))
+def __test_bulk_get(async_run: Callable, client: CouchClient):
+    docs = [db_models.Doc(id=doc_id)]
+    response = async_run(client.db_bulk_get(db_name, docs=docs))
     assert response.status_code == 200
 
 
-#def test_bulk_docs(async_run: Callable, client: CouchClient):
-    #response = async_run(client.db_bulk_docs(db_name, docs=[doc_id]))
-    #assert response.status_code == 200
+def test_bulk_docs(async_run: Callable, client: CouchClient):
+    docs = [db_models.ExtendedDoc(_id=doc_id)]
+    response = async_run(client.db_bulk_docs(db_name, docs=docs))
+    assert response.status_code == 200
 
 
 #def test_find(async_run: Callable, client: CouchClient):
