@@ -11,7 +11,7 @@ class BaseHttpClient(metaclass=abc.ABCMeta):
 
     @classmethod
     @abc.abstractmethod
-    def get_client(cls, url: str):
+    def get_client(cls, url: str, auth):
         return NotImplemented
 
     @abc.abstractmethod
