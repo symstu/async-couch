@@ -10,8 +10,8 @@ class HttpxCouchClient(BaseHttpClient, httpx.AsyncClient):
     request_method = httpx.AsyncClient.request
 
     @classmethod
-    def get_client(cls, couch_endpoint_url):
-        return cls(base_url=couch_endpoint_url)
+    def get_client(cls, couch_endpoint_url, **kwargs):
+        return cls(base_url=couch_endpoint_url, **kwargs)
 
     @staticmethod
     def prepare_request(endpoint: str,
