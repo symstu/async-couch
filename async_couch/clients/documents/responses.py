@@ -10,6 +10,12 @@ class DocumentExistingResponse(EmptyResponse):
     e_tag: str
     # Document’s revision token
 
+    @classmethod
+    def load(cls, response):
+        e_tag = response.headers.get('ETag')
+        if e_tag:
+            return cls(e_tag=e_tag.replace('"', ''))
+
 
 @dataclass
 class DocumentDetailedResponse(EmptyResponse):
