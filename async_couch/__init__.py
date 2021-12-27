@@ -23,7 +23,8 @@ class CouchClient(DocEndpoint,
 def get_couch_client(https: bool = False,
                      host: str = 'localhost',
                      port: int = 5984,
-                     request_adapter: BaseHttpClient = HttpxCouchClient) -> CouchClient:
+                     request_adapter: BaseHttpClient = HttpxCouchClient,
+                     **kwargs) -> CouchClient:
     """
     Initialize CouchClient
 
@@ -52,5 +53,5 @@ def get_couch_client(https: bool = False,
     if https:
         schema += 's'
 
-    http_client = request_adapter.get_client(f'{schema}://{host}:{port}')
+    http_client = request_adapter.get_client(f'{schema}://{host}:{port}', **kwargs)
     return CouchClient(http_client=http_client)
