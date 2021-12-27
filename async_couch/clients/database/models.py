@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+
+
 class ClusterObject:
     n: int
     # Replicas. The number of copies of every document.
@@ -30,3 +33,22 @@ class DatabaseProps:
     partitioned: bool
     # (optional) If present and true, this indicates that the database
     # is partitioned.
+
+
+@dataclass()
+class Doc:
+    id: str
+    rev: str = None
+
+    def dump(self):
+        return {'id': self.id, 'rev': self.rev}
+
+
+@dataclass()
+class ExtendedDoc:
+    _id: str
+    _rev: str = None
+    _deleted: bool = None
+
+    def dump(self):
+        return {'_id': self._id, '_rev': self._rev, '_deleted': self._deleted}
