@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import typing
 
 from async_couch.types import EmptyResponse
 
@@ -53,3 +54,18 @@ class ServerResponse(EmptyResponse):
     # on this string for counting the number of updates
 
     props_partitioned: models.DatabaseProps
+
+
+@dataclass
+class FindResponse(EmptyResponse):
+    docs: typing.List[dict]
+    # Array of documents matching the search. In each matching document, the
+    # fields specified in the fields part of the request body are listed, along
+    # with their values.
+
+    warning: str
+    # Execution warnings
+
+    bookmark: str
+    # An opaque string used for paging. See the bookmark field in the request
+    # for usage details.
