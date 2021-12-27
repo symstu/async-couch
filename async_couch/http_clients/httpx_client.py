@@ -39,6 +39,7 @@ class HttpxCouchClient(BaseHttpClient, httpx.AsyncClient):
 
     @staticmethod
     def to_universal_response(response: httpx.Response):
+        response.raise_for_status()
         return types.UniversalResponse(
             status_code=response.status_code,
             headers=response.headers,
