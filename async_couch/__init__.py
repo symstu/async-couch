@@ -53,5 +53,9 @@ def get_couch_client(https: bool = False,
     if https:
         schema += 's'
 
-    http_client = request_adapter.get_client(f'{schema}://{host}:{port}', **kwargs)
+    url = f'{schema}://{host}'
+    if port:
+        url += f':{port}'
+
+    http_client = request_adapter.get_client(url, **kwargs)
     return CouchClient(http_client=http_client)
