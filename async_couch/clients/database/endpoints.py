@@ -744,36 +744,32 @@ class DatabaseEndpoint(BaseEndpoint):
         exc.CouchResponseError:
             If server error occurred
         """
-
-        query = dict()
-
-        if limit:
-            query['limit'] = limit
-        if skip:
-            query['skip'] = skip
-        if sort:
-            query['sort'] = sort
-        if fields:
-            query['fields'] = fields
-        if use_index:
-            query['use_index'] = use_index
-        if r:
-            query['r'] = r
-        if bookmark:
-            query['bookmark'] = bookmark
-        if update:
-            query['update'] = update
-        if stable:
-            query['stable'] = stable
-        if stale:
-            query['stale'] = stale
-        if execution_stats:
-            query['execution_stats'] = execution_stats
-
         json_data = dict()
 
         if selector:
             json_data['selector'] = selector
+        if limit:
+            json_data['limit'] = limit
+        if skip:
+            json_data['skip'] = skip
+        if sort:
+            json_data['sort'] = sort
+        if fields:
+            json_data['fields'] = fields
+        if use_index:
+            json_data['use_index'] = use_index
+        if r:
+            json_data['r'] = r
+        if bookmark:
+            json_data['bookmark'] = bookmark
+        if update:
+            json_data['update'] = update
+        if stable:
+            json_data['stable'] = stable
+        if stale:
+            json_data['stale'] = stale
+        if execution_stats:
+            json_data['execution_stats'] = execution_stats
 
         return await self.http_client.make_request(
             endpoint='/{db}/_find',
@@ -785,7 +781,6 @@ class DatabaseEndpoint(BaseEndpoint):
                 404: 'Requested database not found',
                 500: 'Query execution error'
             },
-            query=query,
             path={'db': db},
             json_data=json_data,
             response_model=resp.FindResponse
