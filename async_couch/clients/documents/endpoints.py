@@ -485,7 +485,8 @@ class DocAttachmentEndpoint(BaseEndpoint):
                              db: str,
                              doc_id: str,
                              attachment_id: str,
-                             rev: str = None) -> types.UniversalResponse:
+                             rev: str = None,
+                             bytes_range: tuple = None) -> types.UniversalResponse:
         """
         Returns the file attachment associated with the document. The raw
         data of the associated attachment is returned (just as if you were
@@ -508,6 +509,10 @@ class DocAttachmentEndpoint(BaseEndpoint):
         rev: str = None
             Actual document’s revision
 
+        bytes_range: tuple = None
+            Range of bytes to get from attachment, works only with 'application/octet-stream'
+            Content-Type of attachment
+
         Returns
         ----------
         `UniversalResponse`
@@ -523,16 +528,26 @@ class DocAttachmentEndpoint(BaseEndpoint):
         if rev:
             query['rev'] = rev
 
+        if bytes_range:
+            if len(bytes_range) == 2:
+                headers = {'Range': f'bytes={bytes_range[0]}-{bytes_range[1]}'}
+            else:
+                headers = {'Range': f'bytes={bytes_range[0]}-'}
+        else:
+            headers = None
+
         return await self.http_client.make_request(
             endpoint=self.__doc_attachment_endpoint__,
             method=types.HttpMethod.GET,
             statuses={
                 200: 'Attachment exists',
+                206: 'Attachment partially read',
                 401: 'Read privilege required',
                 404: 'Specified database, document or attachment was not found'
             },
             path={'db': db, 'doc_id': doc_id, 'att_id': attachment_id},
-            query=query
+            query=query,
+            headers=headers,
         )
 
     async def attachment_upload(self,
