@@ -17,7 +17,9 @@ class CouchClient(DocEndpoint,
                   DesignDocEndpoint,
                   DesignViewEndpoint,
                   DatabaseEndpoint):
-    pass
+
+    async def close(self):
+        await self.http_client.aclose()
 
 
 def get_couch_client(https: bool = False,
