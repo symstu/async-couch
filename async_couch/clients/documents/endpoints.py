@@ -151,19 +151,19 @@ class DocEndpoint(BaseEndpoint):
             query['local_seq'] = local_seq
 
         if meta:
-            query['local_seq'] = local_seq
+            query['meta'] = meta
 
         if open_revs:
-            query['open_revs'] = local_seq
+            query['open_revs'] = open_revs
 
         if rev:
-            query['rev'] = local_seq
+            query['rev'] = rev
 
         if revs:
-            query['revs'] = local_seq
+            query['revs'] = revs
 
         if revs_info:
-            query['revs_info'] = local_seq
+            query['revs_info'] = revs_info
 
         return await self.http_client.make_request(
             endpoint=self.__doc_endpoint__,
