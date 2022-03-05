@@ -1,7 +1,6 @@
-import typing
-
 from async_couch import types
 from async_couch.clients.designs.responses import ExecuteViewResponse
+
 from async_couch.http_clients.base_client import BaseEndpoint
 from . import responses as resp
 
@@ -587,7 +586,7 @@ class DatabaseEndpoint(BaseEndpoint):
             result['id'] = id
 
         return await self.http_client.make_request(
-            endpoint='/db/_bulk_get',
+            endpoint='/{db}/_bulk_get',
             method=types.HttpMethod.POST,
             statuses={
                 200: 'Request completed successfully',
@@ -648,7 +647,7 @@ class DatabaseEndpoint(BaseEndpoint):
             query['new_edits'] = new_edits
 
         return await self.http_client.make_request(
-            endpoint='/db/_bulk_docs',
+            endpoint='/{db}/_bulk_docs',
             method=types.HttpMethod.POST,
             statuses={
                 201: 'Document(s) have been created or updated',
@@ -745,39 +744,35 @@ class DatabaseEndpoint(BaseEndpoint):
         exc.CouchResponseError:
             If server error occurred
         """
-
-        query = dict()
-
-        if limit:
-            query['limit'] = limit
-        if skip:
-            query['skip'] = skip
-        if sort:
-            query['sort'] = sort
-        if fields:
-            query['fields'] = fields
-        if use_index:
-            query['use_index'] = use_index
-        if r:
-            query['r'] = r
-        if bookmark:
-            query['bookmark'] = bookmark
-        if update:
-            query['update'] = update
-        if stable:
-            query['stable'] = stable
-        if stale:
-            query['stale'] = stale
-        if execution_stats:
-            query['execution_stats'] = execution_stats
-
         json_data = dict()
 
         if selector:
             json_data['selector'] = selector
+        if limit:
+            json_data['limit'] = limit
+        if skip:
+            json_data['skip'] = skip
+        if sort:
+            json_data['sort'] = sort
+        if fields:
+            json_data['fields'] = fields
+        if use_index:
+            json_data['use_index'] = use_index
+        if r:
+            json_data['r'] = r
+        if bookmark:
+            json_data['bookmark'] = bookmark
+        if update:
+            json_data['update'] = update
+        if stable:
+            json_data['stable'] = stable
+        if stale:
+            json_data['stale'] = stale
+        if execution_stats:
+            json_data['execution_stats'] = execution_stats
 
         return await self.http_client.make_request(
-            endpoint='/db/_find',
+            endpoint='/{db}/_find',
             method=types.HttpMethod.POST,
             statuses={
                 200: 'Request completed successfully',
@@ -786,9 +781,8 @@ class DatabaseEndpoint(BaseEndpoint):
                 404: 'Requested database not found',
                 500: 'Query execution error'
             },
-            query=query,
             path={'db': db},
             json_data=json_data,
-            response_model=ExecuteViewResponse
+            response_model=resp.FindResponse
         )
 

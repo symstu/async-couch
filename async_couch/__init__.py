@@ -17,7 +17,9 @@ class CouchClient(DocEndpoint,
                   DesignDocEndpoint,
                   DesignViewEndpoint,
                   DatabaseEndpoint):
-    pass
+
+    async def close(self):
+        await self.http_client.aclose()
 
 
 def get_couch_client(https: bool = False,
@@ -53,5 +55,9 @@ def get_couch_client(https: bool = False,
     if https:
         schema += 's'
 
-    http_client = request_adapter.get_client(f'{schema}://{host}:{port}', **kwargs)
+    url = f'{schema}://{host}'
+    if port:
+        url += f':{port}'
+
+    http_client = request_adapter.get_client(url, **kwargs)
     return CouchClient(http_client=http_client)

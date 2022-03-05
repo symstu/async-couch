@@ -19,7 +19,7 @@ class SizeObj:
 @dataclass
 class DesignViewIndex:
     compact_running: bool
-    """Indicates whether a compaction routine is currently 
+    """Indicates whether a compaction routine is currently
     running on the view"""
 
     sizes: SizeObj
@@ -35,7 +35,7 @@ class DesignViewIndex:
     """MD5 signature of the views for the design document"""
 
     update_seq: int or str
-    """The update sequence of the corresponding database that has been 
+    """The update sequence of the corresponding database that has been
     indexed"""
 
     updater_running: bool
@@ -45,7 +45,7 @@ class DesignViewIndex:
     """Number of clients waiting on views from this design document"""
 
     waiting_commit: bool
-    """Indicates if there are outstanding commits to the underlying database 
+    """Indicates if there are outstanding commits to the underlying database
     that need to processed"""
 
 
@@ -71,7 +71,7 @@ class ExecuteViewResponse(EmptyResponse):
     """Offset where the document list started"""
 
     rows: typing.List[ExecuteViewRow] = None
-    """Array of view row objects. By default the information returned 
+    """Array of view row objects. By default the information returned
     contains only the document ID and revision"""
 
     total_rows: int = None
