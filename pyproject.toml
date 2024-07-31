@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "async-couchdb"
+version = "0.0.1"
+description = "Async client for CouchDB."
+authors = ["Dominik Kozaczko <dominik@kozaczko.info>"]
+license = "MIT"
+readme = "README.md"
+packages = [
+    { include = "async_couch", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+anyio = {version = "^4.4.0", extras = ["trio"]}
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.5.5"
+pre-commit = "^3.7.1"
+pre-commit-hooks = "^4.6.0"
+mypy = "^1.11.0"
+httpx = {version = "^0.27.0", extras = ["http2", "brotli"]}
+ipython = "^8.26.0"
+
+
+
+[tool.poetry.group.tests.dependencies]
+pytest = "^8.3.2"
+tox = "^4.16.0"
+pytest-asyncio = "^0.23.8"
+
+[tool.mypy]
+files = "."
+
+# Use strict defaults
+strict = true
+warn_unreachable = true
+warn_no_return = true
+
+[[tool.mypy.overrides]]
+# Don't require test functions to include types
+module = "tests.*"
+allow_untyped_defs = true
+disable_error_code = "attr-defined"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
