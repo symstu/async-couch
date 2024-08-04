@@ -41,6 +41,12 @@ def get_couch_client(
     request_adapter: BaseHttpClient = HttpxCouchClient
         Http client adapter
 
+    user: str
+        Database authentication - username
+
+    password: str
+        Database authentication - password
+
     Returns
     -------
     CouchClient
@@ -48,14 +54,13 @@ def get_couch_client(
 
     """
     if any([user is None, password is None]):
-        raise ValueError("You need to pass 'user' and 'password'!")
+        raise ValueError("You need to pass 'auth' tuple or both 'user' and 'password'!")
+    kwargs["auth"] = (user, password)
 
     schema = "http"
 
     if https:
         schema += "s"
 
-    http_client = request_adapter.get_client(
-        f"{schema}://{user}:{password}@{host}:{port}", **kwargs
-    )
+    http_client = request_adapter.get_client(f"{schema}://{host}:{port}", **kwargs)
     return CouchClient(http_client=http_client)

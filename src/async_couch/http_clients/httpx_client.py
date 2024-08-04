@@ -8,7 +8,6 @@ from async_couch.http_clients.base_client import BaseHttpClient
 
 class HttpxCouchClient(BaseHttpClient, httpx.AsyncClient):
     request_method = httpx.AsyncClient.request
-    raise_response_errors: bool = False
 
     @classmethod
     def get_client(cls, couch_endpoint_url, **kwargs):

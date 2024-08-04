@@ -1,26 +1,37 @@
-import asyncio
 import os
 
 import pytest
-import typing
 from async_couch import get_couch_client, CouchClient
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-@pytest.fixture(scope="session")
-def loop() -> asyncio.AbstractEventLoop:
-    return asyncio.get_event_loop()
+@pytest.fixture(
+    params=[
+        pytest.param(("asyncio", {"use_uvloop": True}), id="asyncio+uvloop"),
+        pytest.param(("asyncio", {"use_uvloop": False}), id="asyncio"),
+        pytest.param(
+            ("trio", {"restrict_keyboard_interrupt_to_checkpoints": True}), id="trio"
+        ),
+    ],
+    scope="session",
+)
+def anyio_backend(request):
+    return request.param
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def cleanup(client):
+    await client.db_delete("test_db_01")
+    await client.db_delete("test_document_endpoint")
+    await client.db_delete("test_document_attachment_endpoint")
+    await client.db_delete("test_design_document_endpoint")
+    yield
 
 
 @pytest.fixture(scope="session")
-def async_run(loop: asyncio.AbstractEventLoop) -> typing.Callable:
-    return loop.run_until_complete
-
-
-@pytest.fixture(scope="session")
-def client() -> CouchClient:
+def client(anyio_backend) -> CouchClient:
     user = os.getenv("COUCHDB_USER")
     password = os.getenv("COUCHDB_PASSWORD")
     return get_couch_client(user=user, password=password)
