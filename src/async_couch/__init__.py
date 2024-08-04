@@ -1,30 +1,30 @@
 from async_couch import http_clients
-from async_couch.clients.documents.endpoints import (
-    DocEndpoint,
-    DocAttachmentEndpoint
-)
+from async_couch.clients.documents.endpoints import DocEndpoint, DocAttachmentEndpoint
 from async_couch.clients.database.endpoints import DatabaseEndpoint
-from async_couch.clients.designs.endpoints import (
-    DesignDocEndpoint,
-    DesignViewEndpoint
-)
+from async_couch.clients.designs.endpoints import DesignDocEndpoint, DesignViewEndpoint
 
 from async_couch.http_clients import HttpxCouchClient, BaseHttpClient
 
 
-class CouchClient(DocEndpoint,
-                  DocAttachmentEndpoint,
-                  DesignDocEndpoint,
-                  DesignViewEndpoint,
-                  DatabaseEndpoint):
+class CouchClient(
+    DocEndpoint,
+    DocAttachmentEndpoint,
+    DesignDocEndpoint,
+    DesignViewEndpoint,
+    DatabaseEndpoint,
+):
     pass
 
 
-def get_couch_client(https: bool = False,
-                     host: str = 'localhost',
-                     port: int = 5984,
-                     request_adapter: BaseHttpClient = HttpxCouchClient,
-                     **kwargs) -> CouchClient:
+def get_couch_client(
+    https: bool = False,
+    host: str = "localhost",
+    port: int = 5984,
+    request_adapter: BaseHttpClient = HttpxCouchClient,
+    user: str | None = None,
+    password: str | None = None,
+    **kwargs,
+) -> CouchClient:
     """
     Initialize CouchClient
 
@@ -48,10 +48,15 @@ def get_couch_client(https: bool = False,
         CouchDB API realisation
 
     """
-    schema = 'http'
+    if any([user is None, password is None]):
+        raise ValueError("You need to pass 'user' and 'password'!")
+
+    schema = "http"
 
     if https:
-        schema += 's'
+        schema += "s"
 
-    http_client = request_adapter.get_client(f'{schema}://{host}:{port}', **kwargs)
+    http_client = request_adapter.get_client(
+        f"{schema}://{user}:{password}@{host}:{port}", **kwargs
+    )
     return CouchClient(http_client=http_client)

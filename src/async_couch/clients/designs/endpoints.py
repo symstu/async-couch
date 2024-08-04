@@ -8,13 +8,10 @@ class DesignDocEndpoint(BaseEndpoint):
     Implement CouchDB design info API
     """
 
-    __des_doc_endpoint__ = '/{db}/_design/{des_id}/_info'
+    __des_doc_endpoint__ = "/{db}/_design/{des_id}/_info"
     """Design Documents info endpoint"""
 
-    async def des_info(self,
-                       db: str,
-                       des_id: str) -> types.UniversalResponse:
-
+    async def des_info(self, db: str, des_id: str) -> types.UniversalResponse:
         """
         Obtains information about the specified design document, including
         the index, index size and current status of the design document and
@@ -43,11 +40,11 @@ class DesignDocEndpoint(BaseEndpoint):
             endpoint=self.__des_doc_endpoint__,
             method=types.HttpMethod.GET,
             statuses={
-                200: 'Find info',
-                404: 'Specified database or design was not found'
+                200: "Find info",
+                404: "Specified database or design was not found",
             },
-            path={'db': db, 'des_id': des_id},
-            response_model=resp.DesignInfoResponse
+            path={"db": db, "des_id": des_id},
+            response_model=resp.DesignInfoResponse,
         )
 
 
@@ -56,35 +53,37 @@ class DesignViewEndpoint(BaseEndpoint):
     Implement CouchDB views API
     """
 
-    __des_view_endpoint__ = '/{db}/_design/{des_id}/_view/{view_name}'
+    __des_view_endpoint__ = "/{db}/_design/{des_id}/_view/{view_name}"
     """Design view endpoint"""
 
-    async def view_exec(self,
-                        db: str,
-                        des_id: str,
-                        view_name: str,
-                        conflicts: bool = False,
-                        descending: bool = False,
-                        end_key: dict = None,
-                        end_key_doc_id: str = None,
-                        group: bool = False,
-                        group_level: int = None,
-                        include_docs: bool = False,
-                        attachments: bool = False,
-                        att_encoding_info: bool = False,
-                        inclusive_end: bool = True,
-                        key: dict = None,
-                        keys: list = None,
-                        limit: int = None,
-                        reduce: bool = True,
-                        skip: int = 0,
-                        sort: bool = True,
-                        stable: bool = False,
-                        stale: str = None,
-                        start_key: dict = None,
-                        start_key_doc_id: str = None,
-                        update: bool = True,
-                        update_seq: bool = False) -> types.UniversalResponse:
+    async def view_exec(
+        self,
+        db: str,
+        des_id: str,
+        view_name: str,
+        conflicts: bool = False,
+        descending: bool = False,
+        end_key: dict = None,
+        end_key_doc_id: str = None,
+        group: bool = False,
+        group_level: int = None,
+        include_docs: bool = False,
+        attachments: bool = False,
+        att_encoding_info: bool = False,
+        inclusive_end: bool = True,
+        key: dict = None,
+        keys: list = None,
+        limit: int = None,
+        reduce: bool = True,
+        skip: int = 0,
+        sort: bool = True,
+        stable: bool = False,
+        stale: str = None,
+        start_key: dict = None,
+        start_key_doc_id: str = None,
+        update: bool = True,
+        update_seq: bool = False,
+    ) -> types.UniversalResponse:
         """
         Executes the specified view function from the specified
         design document.
@@ -198,81 +197,81 @@ class DesignViewEndpoint(BaseEndpoint):
         query = dict()
 
         if conflicts:
-            query['conflicts'] = conflicts
+            query["conflicts"] = conflicts
 
         if descending:
-            query['descending'] = descending
+            query["descending"] = descending
 
         if end_key:
-            query['end_key'] = end_key
+            query["end_key"] = end_key
 
         if end_key_doc_id:
-            query['end_key_doc_id'] = end_key_doc_id
+            query["end_key_doc_id"] = end_key_doc_id
 
         if group:
-            query['group'] = group
+            query["group"] = group
 
         if group_level:
-            query['group_level'] = group_level
+            query["group_level"] = group_level
 
         if include_docs:
-            query['include_docs'] = include_docs
+            query["include_docs"] = include_docs
 
         if attachments:
-            query['attachments'] = attachments
+            query["attachments"] = attachments
 
         if att_encoding_info:
-            query['att_encoding_info'] = att_encoding_info
+            query["att_encoding_info"] = att_encoding_info
 
         if not inclusive_end:
-            query['inclusive_end'] = inclusive_end
+            query["inclusive_end"] = inclusive_end
 
         if key:
-            query['key'] = f'"{key}"'
+            query["key"] = f'"{key}"'
 
         if keys:
-            query['keys'] = keys
+            query["keys"] = keys
 
         if limit:
-            query['limit'] = limit
+            query["limit"] = limit
 
         if not reduce:
-            query['reduce'] = reduce
+            query["reduce"] = reduce
 
         if skip:
-            query['skip'] = skip
+            query["skip"] = skip
 
         if not sort:
-            query['sorted'] = sort
+            query["sorted"] = sort
 
         if stable:
-            query['stable'] = stable
+            query["stable"] = stable
 
         if stale:
-            query['stale'] = stale
+            query["stale"] = stale
 
         if start_key:
-            query['start_key'] = start_key
+            query["start_key"] = start_key
 
         if start_key_doc_id:
-            query['start_key_doc_id'] = start_key_doc_id
+            query["start_key_doc_id"] = start_key_doc_id
 
-        if update != 'true':
-            query['update'] = update
+        if update != "true":
+            query["update"] = update
 
         if update_seq:
-            query['update_seq'] = update_seq
+            query["update_seq"] = update_seq
 
         return await self.http_client.make_request(
             endpoint=self.__des_view_endpoint__,
             method=types.HttpMethod.GET,
             statuses={
-                200: 'Request completed successfully',
-                400: 'Invalid request',
-                401: 'Read privilege required',
-                404: 'Specified database, design document or view is missed'
+                200: "Request completed successfully",
+                400: "Invalid request",
+                401: "Read privilege required",
+                404: "Specified database, design document or view is missed",
             },
             query=query,
-            path={'db': db, 'des_id': des_id, 'view_name': view_name},
-            response_model=resp.ExecuteViewResponse
+            path={"db": db, "des_id": des_id, "view_name": view_name},
+            response_model=resp.ExecuteViewResponse,
         )

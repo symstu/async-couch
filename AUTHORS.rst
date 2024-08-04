@@ -2,8 +2,13 @@
 Credits
 =======
 
-Development Lead
-----------------
+Creator
+-------
+
+* Maksym Stukalo <stukalo.maksym@gmail.com>
+
+Developer
+---------
 
 * Dominik Kozaczko <dominik@kozaczko.info>
 

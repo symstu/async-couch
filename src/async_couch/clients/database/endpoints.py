@@ -1,5 +1,3 @@
-import typing
-
 from async_couch import types
 from async_couch.clients.designs.responses import ExecuteViewResponse
 from async_couch.http_clients.base_client import BaseEndpoint
@@ -11,7 +9,7 @@ class DatabaseEndpoint(BaseEndpoint):
     Implement CouchDB database API
     """
 
-    __db_endpoint__ = '/{db}'
+    __db_endpoint__ = "/{db}"
     """Database endpoint"""
 
     async def db_exists(self, db: str) -> types.UniversalResponse:
@@ -39,11 +37,8 @@ class DatabaseEndpoint(BaseEndpoint):
         return await self.http_client.make_request(
             endpoint=self.__db_endpoint__,
             method=types.HttpMethod.HEAD,
-            statuses={
-                200: 'Database exists',
-                404: 'Requested database not found'
-            },
-            path={'db': db}
+            statuses={200: "Database exists", 404: "Requested database not found"},
+            path={"db": db},
         )
 
     async def db_info(self, db: str) -> resp.ServerResponse:
@@ -69,17 +64,15 @@ class DatabaseEndpoint(BaseEndpoint):
             endpoint=self.__db_endpoint__,
             method=types.HttpMethod.GET,
             statuses={
-                200: 'Request completed successfully',
-                404: 'Requested database not found'
+                200: "Request completed successfully",
+                404: "Requested database not found",
             },
-            path={'db': db}
+            path={"db": db},
         )
 
-    async def db_create(self,
-                        db: str,
-                        q: int = 8,
-                        n: int = 3,
-                        partitioned: bool = False):
+    async def db_create(
+        self, db: str, q: int = 8, n: int = 3, partitioned: bool = False
+    ):
         """
         Creates a new database. The database name {db} must be composed by
         following next rules:
@@ -122,19 +115,18 @@ class DatabaseEndpoint(BaseEndpoint):
             endpoint=self.__db_endpoint__,
             method=types.HttpMethod.PUT,
             statuses={
-                201: 'Database created successfully (quorum is met)',
-                202: 'Accepted (at least by one node)',
-                400: 'Invalid database name',
-                412: 'Database already exists'
+                201: "Database created successfully (quorum is met)",
+                202: "Accepted (at least by one node)",
+                400: "Invalid database name",
+                412: "Database already exists",
             },
-            path={'db': db},
-            query={'q': q, 'n': n, 'partitioned': partitioned}
+            path={"db": db},
+            query={"q": q, "n": n, "partitioned": partitioned},
         )
 
-    async def db_create_doc(self,
-                            db: str,
-                            doc: dict,
-                            batch: str = None) -> types.UniversalResponse:
+    async def db_create_doc(
+        self, db: str, doc: dict, batch: str = None
+    ) -> types.UniversalResponse:
         """
         Creates a new document in the specified database, using the supplied
         JSON document structure. If the JSON structure includes the _id field,
@@ -166,17 +158,17 @@ class DatabaseEndpoint(BaseEndpoint):
             endpoint=self.__db_endpoint__,
             method=types.HttpMethod.POST,
             statuses={
-                201: 'Document created and stored on disk',
-                202: 'Document data accepted, but not yet stored on disk',
-                400: 'Invalid database name',
-                401: 'Write privileges required',
-                404: 'Database does not exist',
-                409: 'A Conflicting Document with same ID already exists'
+                201: "Document created and stored on disk",
+                202: "Document data accepted, but not yet stored on disk",
+                400: "Invalid database name",
+                401: "Write privileges required",
+                404: "Database does not exist",
+                409: "A Conflicting Document with same ID already exists",
             },
-            path={'db': db},
-            query={'batch': 'ok'} if batch else None,
+            path={"db": db},
+            query={"batch": "ok"} if batch else None,
             json_data=doc,
-            response_model=resp.DocumentCreated
+            response_model=resp.DocumentCreated,
         )
 
     async def db_delete(self, db: str):
@@ -203,40 +195,41 @@ class DatabaseEndpoint(BaseEndpoint):
             endpoint=self.__db_endpoint__,
             method=types.HttpMethod.DELETE,
             statuses={
-                200: 'Database removed successfully',
-                202: 'Accepted (deleted by at least one of the nodes)',
-                400: 'Invalid database name or forgotten document id by '
-                     'accident',
-                401: 'CouchDB Server Administrator privileges required',
-                404: 'Database doesn’t exist or invalid database name'
+                200: "Database removed successfully",
+                202: "Accepted (deleted by at least one of the nodes)",
+                400: "Invalid database name or forgotten document id by " "accident",
+                401: "CouchDB Server Administrator privileges required",
+                404: "Database doesn’t exist or invalid database name",
             },
-            path={'db': db},
+            path={"db": db},
         )
 
-    async def db_all_docs(self,
-                          db: str,
-                          conflicts: bool = False,
-                          descending: bool = False,
-                          end_key: dict = None,
-                          end_key_doc_id: str = None,
-                          group: bool = False,
-                          group_level: int = None,
-                          include_docs: bool = False,
-                          attachments: bool = False,
-                          att_encoding_info: bool = False,
-                          inclusive_end: bool = True,
-                          key: dict = None,
-                          keys: list = None,
-                          limit: int = None,
-                          reduce: bool = True,
-                          skip: int = 0,
-                          sort: bool = True,
-                          stable: bool = False,
-                          stale: str = None,
-                          start_key: dict = None,
-                          start_key_doc_id: str = None,
-                          update: bool = True,
-                          update_seq: bool = False) -> types.UniversalResponse:
+    async def db_all_docs(
+        self,
+        db: str,
+        conflicts: bool = False,
+        descending: bool = False,
+        end_key: dict = None,
+        end_key_doc_id: str = None,
+        group: bool = False,
+        group_level: int = None,
+        include_docs: bool = False,
+        attachments: bool = False,
+        att_encoding_info: bool = False,
+        inclusive_end: bool = True,
+        key: dict = None,
+        keys: list = None,
+        limit: int = None,
+        reduce: bool = True,
+        skip: int = 0,
+        sort: bool = True,
+        stable: bool = False,
+        stale: str = None,
+        start_key: dict = None,
+        start_key_doc_id: str = None,
+        update: bool = True,
+        update_seq: bool = False,
+    ) -> types.UniversalResponse:
         """
         POST _all_docs functionality supports identical parameters and
         behavior as specified in the GET /{db}/_all_docs API but allows for
@@ -345,102 +338,104 @@ class DatabaseEndpoint(BaseEndpoint):
         query = dict()
 
         if conflicts:
-            query['conflicts'] = conflicts
+            query["conflicts"] = conflicts
 
         if descending:
-            query['descending'] = descending
+            query["descending"] = descending
 
         if end_key:
-            query['end_key'] = end_key
+            query["end_key"] = end_key
 
         if end_key_doc_id:
-            query['end_key_doc_id'] = end_key_doc_id
+            query["end_key_doc_id"] = end_key_doc_id
 
         if group:
-            query['group'] = group
+            query["group"] = group
 
         if group_level:
-            query['group_level'] = group_level
+            query["group_level"] = group_level
 
         if include_docs:
-            query['include_docs'] = include_docs
+            query["include_docs"] = include_docs
 
         if attachments:
-            query['attachments'] = attachments
+            query["attachments"] = attachments
 
         if att_encoding_info:
-            query['att_encoding_info'] = att_encoding_info
+            query["att_encoding_info"] = att_encoding_info
 
         if not inclusive_end:
-            query['inclusive_end'] = inclusive_end
+            query["inclusive_end"] = inclusive_end
 
         if limit:
-            query['limit'] = limit
+            query["limit"] = limit
 
         if not reduce:
-            query['reduce'] = reduce
+            query["reduce"] = reduce
 
         if skip:
-            query['skip'] = skip
+            query["skip"] = skip
 
         if not sort:
-            query['sorted'] = sort
+            query["sorted"] = sort
 
         if stable:
-            query['stable'] = stable
+            query["stable"] = stable
 
         if stale:
-            query['stale'] = stale
+            query["stale"] = stale
 
         if start_key:
-            query['start_key'] = start_key
+            query["start_key"] = start_key
 
         if start_key_doc_id:
-            query['start_key_doc_id'] = start_key_doc_id
+            query["start_key_doc_id"] = start_key_doc_id
 
-        if update != 'true':
-            query['update'] = update
+        if update != "true":
+            query["update"] = update
 
         if update_seq:
-            query['update_seq'] = update_seq
+            query["update_seq"] = update_seq
 
         json_data = dict()
 
         if key:
-            json_data['key'] = f'"{key}"'
+            json_data["key"] = f'"{key}"'
         elif keys:
-            json_data['keys'] = keys
+            json_data["keys"] = keys
 
         return await self.http_client.make_request(
-            endpoint='/{db}/_all_docs',
+            endpoint="/{db}/_all_docs",
             method=types.HttpMethod.POST,
             statuses={
-                200: 'Request completed successfully',
-                400: 'Invalid request',
-                401: 'Read privilege required',
-                404: 'Specified database, design document or view is missed'
+                200: "Request completed successfully",
+                400: "Invalid request",
+                401: "Read privilege required",
+                404: "Specified database, design document or view is missed",
             },
             query=query,
-            path={'db': db},
+            path={"db": db},
             json_data=json_data,
-            response_model=ExecuteViewResponse
+            response_model=ExecuteViewResponse,
         )
 
-    async def db_design_docs(self,
-                             db: str,
-                             conflicts: bool = False,
-                             descending: bool = False,
-                             end_key: str = None,
-                             end_key_doc_id: str = None,
-                             include_docs: bool = False,
-                             inclusive_end: bool = True,
-                             key: str = None,
-                             keys: str = None,
-                             limit: int = None,
-                             skip: int = 0,
-                             start_key: str = None,
-                             start_key_doc_id: str = None,
-                             update_seq: bool = False) -> types.UniversalResponse:
+    async def db_design_docs(
+        self,
+        db: str,
+        conflicts: bool = False,
+        descending: bool = False,
+        end_key: str = None,
+        end_key_doc_id: str = None,
+        include_docs: bool = False,
+        inclusive_end: bool = True,
+        key: str = None,
+        keys: str = None,
+        limit: int = None,
+        skip: int = 0,
+        start_key: str = None,
+        start_key_doc_id: str = None,
+        update_seq: bool = False,
+    ) -> types.UniversalResponse:
         """
         POST _all_docs functionality supports identical parameters and behavior
         as specified in the GET /{db}/_all_docs API but allows for the query
@@ -507,52 +502,51 @@ class DatabaseEndpoint(BaseEndpoint):
         query = dict()
 
         if conflicts:
-            query['conflicts'] = conflicts
+            query["conflicts"] = conflicts
         if descending:
-            query['descending'] = descending
+            query["descending"] = descending
         if end_key:
-            query['end_key'] = end_key
+            query["end_key"] = end_key
         if end_key_doc_id:
-            query['end_key_doc_id'] = end_key_doc_id
+            query["end_key_doc_id"] = end_key_doc_id
         if include_docs:
-            query['include_docs'] = include_docs
+            query["include_docs"] = include_docs
         if not inclusive_end:
-            query['inclusive_end'] = inclusive_end
+            query["inclusive_end"] = inclusive_end
         if limit:
-            query['limit'] = limit
+            query["limit"] = limit
         if skip:
-            query['slip'] = skip
+            query["slip"] = skip
         if start_key:
-            query['start_key'] = start_key
+            query["start_key"] = start_key
         if start_key_doc_id:
-            query['start_key_doc_id'] = start_key_doc_id
+            query["start_key_doc_id"] = start_key_doc_id
         if update_seq:
-            query['update_seq'] = update_seq
+            query["update_seq"] = update_seq
 
         json_data = dict()
 
         if key:
-            json_data['key'] = f'{key}'
+            json_data["key"] = f"{key}"
         elif keys:
-            json_data['keys'] = keys
+            json_data["keys"] = keys
 
         return await self.http_client.make_request(
-            endpoint='/{db}/_design_docs',
+            endpoint="/{db}/_design_docs",
             method=types.HttpMethod.POST,
             statuses={
-                200: 'Request completed successfully',
-                404: 'Requested database not found'
+                200: "Request completed successfully",
+                404: "Requested database not found",
             },
             query=query,
-            path={'db': db},
+            path={"db": db},
             json_data=json_data,
-            response_model=ExecuteViewResponse
+            response_model=ExecuteViewResponse,
         )
 
-    async def db_bulk_get(self,
-                          db: str,
-                          revs: bool = None,
-                          id: int = None) -> types.UniversalResponse:
+    async def db_bulk_get(
+        self, db: str, revs: bool = None, id: int = None
+    ) -> types.UniversalResponse:
         """
         This method can be called to query several documents in bulk. It is
         well suited for fetching a specific revision of documents, as
@@ -579,35 +573,33 @@ class DatabaseEndpoint(BaseEndpoint):
         query = dict()
 
         if revs:
-            query['revs'] = revs
+            query["revs"] = revs
 
         result = dict()
 
         if id:
-            result['id'] = id
+            result["id"] = id
 
         return await self.http_client.make_request(
-            endpoint='/db/_bulk_get',
+            endpoint="/db/_bulk_get",
             method=types.HttpMethod.POST,
             statuses={
-                200: 'Request completed successfully',
-                400: 'The request provided invalid JSON data or invalid '
-                     'query parameter',
-                401: 'Read permission required',
-                404: 'Invalid database name',
-                415: 'Bad Content-Type value'
+                200: "Request completed successfully",
+                400: "The request provided invalid JSON data or invalid "
+                "query parameter",
+                401: "Read permission required",
+                404: "Invalid database name",
+                415: "Bad Content-Type value",
             },
             query=query,
-            path={'db': db},
+            path={"db": db},
             json_data=result,
-            response_model=ExecuteViewResponse
+            response_model=ExecuteViewResponse,
         )
 
-    async def db_bulk_docs(self,
-                           db: str,
-                           docs: list,
-                           new_edits: bool=True) -> types.UniversalResponse:
-
+    async def db_bulk_docs(
+        self, db: str, docs: list, new_edits: bool = True
+    ) -> types.UniversalResponse:
         """
         The bulk document API allows you to create and update multiple
         documents at the same time within a single request. The basic operation
@@ -643,38 +635,39 @@ class DatabaseEndpoint(BaseEndpoint):
         query = dict()
 
         if docs:
-            query['docs'] = docs
+            query["docs"] = docs
         if new_edits:
-            query['new_edits'] = new_edits
+            query["new_edits"] = new_edits
 
         return await self.http_client.make_request(
-            endpoint='/db/_bulk_docs',
+            endpoint="/db/_bulk_docs",
             method=types.HttpMethod.POST,
             statuses={
-                201: 'Document(s) have been created or updated',
-                401: 'The request provided invalid JSON data',
-                404: 'Requested database not found'
+                201: "Document(s) have been created or updated",
+                401: "The request provided invalid JSON data",
+                404: "Requested database not found",
             },
             query=query,
-            path={'db': db},
-            response_model=ExecuteViewResponse
+            path={"db": db},
+            response_model=ExecuteViewResponse,
         )
 
-    async def db_find(self,
-                      db: str,
-                      selector: dict,
-                      limit: int = 25,
-                      skip: int = None,
-                      sort: dict = None,
-                      fields: dict = None,
-                      use_index: dict = None,
-                      r: int = 1,
-                      bookmark: str = None,
-                      update: bool = True,
-                      stable: bool = None,
-                      stale: str = None,
-                      execution_stats: bool = False) -> ExecuteViewResponse:
-
+    async def db_find(
+        self,
+        db: str,
+        selector: dict,
+        limit: int = 25,
+        skip: int = None,
+        sort: dict = None,
+        fields: dict = None,
+        use_index: dict = None,
+        r: int = 1,
+        bookmark: str = None,
+        update: bool = True,
+        stable: bool = None,
+        stale: str = None,
+        execution_stats: bool = False,
+    ) -> ExecuteViewResponse:
         """
         Find documents using a declarative JSON querying syntax. Queries can
         use the built-in _all_docs index or custom indexes, specified using the
@@ -749,46 +742,45 @@ class DatabaseEndpoint(BaseEndpoint):
         query = dict()
 
         if limit:
-            query['limit'] = limit
+            query["limit"] = limit
         if skip:
-            query['skip'] = skip
+            query["skip"] = skip
         if sort:
-            query['sort'] = sort
+            query["sort"] = sort
         if fields:
-            query['fields'] = fields
+            query["fields"] = fields
         if use_index:
-            query['use_index'] = use_index
+            query["use_index"] = use_index
         if r:
-            query['r'] = r
+            query["r"] = r
         if bookmark:
-            query['bookmark'] = bookmark
+            query["bookmark"] = bookmark
         if update:
-            query['update'] = update
+            query["update"] = update
         if stable:
-            query['stable'] = stable
+            query["stable"] = stable
         if stale:
-            query['stale'] = stale
+            query["stale"] = stale
         if execution_stats:
-            query['execution_stats'] = execution_stats
+            query["execution_stats"] = execution_stats
 
         json_data = dict()
 
         if selector:
-            json_data['selector'] = selector
+            json_data["selector"] = selector
 
         return await self.http_client.make_request(
-            endpoint='/db/_find',
+            endpoint="/db/_find",
             method=types.HttpMethod.POST,
             statuses={
-                200: 'Request completed successfully',
-                400: 'Invalid request',
-                401: 'Read permission required',
-                404: 'Requested database not found',
-                500: 'Query execution error'
+                200: "Request completed successfully",
+                400: "Invalid request",
+                401: "Read permission required",
+                404: "Requested database not found",
+                500: "Query execution error",
             },
             query=query,
-            path={'db': db},
+            path={"db": db},
             json_data=json_data,
-            response_model=ExecuteViewResponse
+            response_model=ExecuteViewResponse,
         )
-

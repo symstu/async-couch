@@ -1,17 +1,31 @@
 [tool.poetry]
-name = "async-couchdb"
-version = "0.0.1"
-description = "Async client for CouchDB."
-authors = ["Dominik Kozaczko <dominik@kozaczko.info>"]
+name = "async-couch"
+version = "0.2.0"
+description = "Asynchronous client for CouchDB."
+authors = [
+    "Maksym Stukalo <stukalo.maksym@gmail.com>",
+    "Dominik Kozaczko <dominik@kozaczko.info>"
+]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/symstu/async-couch/"
 packages = [
     { include = "async_couch", from = "src" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 anyio = {version = "^4.4.0", extras = ["trio"]}
+
+# extras
+httpx = {version = "^0.27.0", extras = ["http2", "brotli"]}
+aiohttp = {version = "^3.10.0", extras = ["speedups"]}
+orjson = "^3.10.6"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -19,15 +33,24 @@ ruff = "^0.5.5"
 pre-commit = "^3.7.1"
 pre-commit-hooks = "^4.6.0"
 mypy = "^1.11.0"
-httpx = {version = "^0.27.0", extras = ["http2", "brotli"]}
 ipython = "^8.26.0"
-
+rich = "^13.7.1"
 
 
 [tool.poetry.group.tests.dependencies]
 pytest = "^8.3.2"
 tox = "^4.16.0"
 pytest-asyncio = "^0.23.8"
+testcontainers = "^4.7.2"
+
+
+[tool.poetry.group.test.dependencies]
+python-dotenv = "^1.0.1"
+
+[tool.poetry.extras]
+httpx = ["httpx"]
+aiohttp = ["aiohttp"]
+orjson = ["orjson"]
 
 [tool.mypy]
 files = "."
