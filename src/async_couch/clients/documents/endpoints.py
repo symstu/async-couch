@@ -1,7 +1,7 @@
-# try:
-#     import orjson as json
-# except ImportError:
-import json
+try:
+    import orjson as json
+except ImportError:
+    import json
 import typing
 
 from async_couch import types
@@ -286,7 +286,9 @@ class DocEndpoint(BaseEndpoint):
             attachment_name = attachment.name.decode()
             json_data["_attachments"][attachment_name] = attachment.as_dict
 
-        json_part.data = json.dumps(json_data).encode()
+        json_part.data = json.dumps(json_data)
+        if isinstance(json_part.data, str):
+            json_part.data = json_part.data.encode()
 
         content_type = f'multipart/related;boundary="{multipart_boundary[2:].decode()}"'
         kwargs["data"] = MultipartRelated.dump([json_part] + attachments)

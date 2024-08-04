@@ -1,7 +1,7 @@
-# try:
-#     import orjson as json
-# except ImportError:
-import json
+try:
+    import orjson as json
+except ImportError:
+    import json
 import enum
 
 from dataclasses import dataclass
