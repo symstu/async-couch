@@ -1,4 +1,3 @@
-from async_couch import http_clients
 from async_couch.clients.documents.endpoints import DocEndpoint, DocAttachmentEndpoint
 from async_couch.clients.database.endpoints import DatabaseEndpoint
 from async_couch.clients.designs.endpoints import DesignDocEndpoint, DesignViewEndpoint

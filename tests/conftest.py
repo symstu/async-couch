@@ -3,10 +3,8 @@ import os
 
 import pytest
 import typing
-from testcontainers.core.container import DockerContainer
 from async_couch import get_couch_client, CouchClient
 from dotenv import load_dotenv
-from testcontainers.core.waiting_utils import wait_for_logs
 
 load_dotenv()
 
@@ -26,6 +24,7 @@ def client() -> CouchClient:
     user = os.getenv("COUCHDB_USER")
     password = os.getenv("COUCHDB_PASSWORD")
     return get_couch_client(user=user, password=password)
+
 
 #
 # @pytest.fixture(scope="session", autouse=True)

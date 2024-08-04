@@ -2,7 +2,7 @@ import pytest
 
 from typing import Callable
 
-from async_couch import CouchClient, exc
+from async_couch import CouchClient
 
 
 db_name = "test_document_attachment_endpoint"

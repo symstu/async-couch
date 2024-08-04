@@ -19,7 +19,7 @@
    * [httpx](https://www.python-httpx.org/>)
 
 ### How to install
-```bash 
+```bash
 pip install async-couch
 ```
 

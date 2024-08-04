@@ -2,7 +2,7 @@ import pytest
 
 from typing import Callable
 
-from async_couch import CouchClient, exc
+from async_couch import CouchClient
 from async_couch.utils.content_types import MultipartRelatedAttachment
 
 
