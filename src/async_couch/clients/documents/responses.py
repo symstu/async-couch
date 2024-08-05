@@ -63,7 +63,7 @@ class DocumentDetailedResponse(EmptyResponse):
             if value:
                 params[field] = value
 
-        params['doc'] = data
+        params["doc"] = data
 
         return cls(**params)
 

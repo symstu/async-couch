@@ -1,4 +1,7 @@
-import json
+try:
+    import orjson as json
+except ImportError:
+    import json
 import re
 import gzip
 import typing
@@ -6,9 +9,9 @@ import typing
 from dataclasses import dataclass
 
 
-new_line = b'\r\n'
+new_line = b"\r\n"
 
-multipart_boundary = b'--XFKYLGSHYCAFWJGY'
+multipart_boundary = b"--XFKYLGSHYCAFWJGY"
 
 
 @dataclass
@@ -29,9 +32,7 @@ class MultipartRelatedAttachment:
     data: bytes = None
     """Binary content"""
 
-    decoding_callbacks = {
-        b'gzip': gzip.decompress
-    }
+    decoding_callbacks = {b"gzip": gzip.decompress}
     """Callbacks for data decoding"""
 
     def decode(self) -> bytes:
@@ -54,7 +55,7 @@ class MultipartRelatedAttachment:
         encoder = self.decoding_callbacks.get(self.encoding)
 
         if not encoder:
-            raise Exception(f'Unknown mime type : {self.mime_type}')
+            raise Exception(f"Unknown mime type : {self.mime_type}")
 
         return encoder(self.data)
 
@@ -67,22 +68,39 @@ class MultipartRelatedAttachment:
         bytes
             Encoded part of request body
         """
-        if self.mime_type == b'application/json':
-            return b''.join([
-                new_line, multipart_boundary,
-                new_line, b'Content-Type: ', self.mime_type,
-                new_line,
-                new_line, self.data
-            ])
+        if self.mime_type == b"application/json":
+            return b"".join(
+                [
+                    new_line,
+                    multipart_boundary,
+                    new_line,
+                    b"Content-Type: ",
+                    self.mime_type,
+                    new_line,
+                    new_line,
+                    self.data,
+                ]
+            )
 
-        return b''.join([
-            new_line, multipart_boundary,
-            new_line, b'Content-Disposition: attachment; filename="', self.name, b'"',
-            new_line, b'Content-Type: ', self.mime_type,
-            new_line, b'Content-Length: ', str(len(self.data)).encode(),
-            new_line,
-            new_line, self.data
-        ])
+        return b"".join(
+            [
+                new_line,
+                multipart_boundary,
+                new_line,
+                b'Content-Disposition: attachment; filename="',
+                self.name,
+                b'"',
+                new_line,
+                b"Content-Type: ",
+                self.mime_type,
+                new_line,
+                b"Content-Length: ",
+                str(len(self.data)).encode(),
+                new_line,
+                new_line,
+                self.data,
+            ]
+        )
 
     @property
     def as_dict(self) -> dict:
@@ -96,9 +114,7 @@ class MultipartRelatedAttachment:
             Short attachment description
         """
         return dict(
-            follows=True,
-            content_type=self.mime_type.decode(),
-            length=len(self.data)
+            follows=True, content_type=self.mime_type.decode(), length=len(self.data)
         )
 
     def json(self) -> dict:
@@ -117,11 +133,13 @@ class MultipartRelated:
     """
     CouchDb MultipartRelated Content-Type. Parse and made request body
     """
-    pattern = re.compile(b'\\n(?P<name>[\w-]*?):\s(?P<value>.*?)'
-                         b'\\r|\\n\\r\\n(?P<content>.*?)\\r\\n')
+
+    pattern = re.compile(
+        b"\\n(?P<name>[\w-]*?):\s(?P<value>.*?)" b"\\r|\\n\\r\\n(?P<content>.*?)\\r\\n"
+    )
     # Parse request body
 
-    pattern_filename = re.compile(b'.*filename=\"(.*)\"')
+    pattern_filename = re.compile(b'.*filename="(.*)"')
     # Find name of attachment in Content-Disposition header
 
     @classmethod
@@ -143,14 +161,14 @@ class MultipartRelated:
         multipart_related_obj = MultipartRelatedAttachment()
 
         for header_name, header_value, content in result:
-            if header_name == b'Content-Type':
+            if header_name == b"Content-Type":
                 multipart_related_obj.mime_type = header_value
 
-            elif header_name == b'Content-Disposition':
+            elif header_name == b"Content-Disposition":
                 name = re.findall(cls.pattern_filename, header_value)[0]
                 multipart_related_obj.name = name
 
-            elif header_name == b'Content-Encoding':
+            elif header_name == b"Content-Encoding":
                 multipart_related_obj.encoding = header_value
 
             elif content:
@@ -173,5 +191,5 @@ class MultipartRelated:
         bytes
             Bytes of encoded attachments
         """
-        result = b''.join(list(map(lambda x: x.encode(), attachments)))
-        return result + new_line + multipart_boundary + b'--'
+        result = b"".join(list(map(lambda x: x.encode(), attachments)))
+        return result + new_line + multipart_boundary + b"--"

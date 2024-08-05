@@ -12,14 +12,14 @@
 > aiohttp, httpx and able to be adopted easily to any other http client.
 
 ### Requirements:
-   * >= Python 3.7
+   * >= Python 3.11
 
 ### Allowed http client
    * [aiohttp](https://docs.aiohttp.org/en/stable/>)
    * [httpx](https://www.python-httpx.org/>)
 
 ### How to install
-```bash 
+```bash
 pip install async-couch
 ```
 

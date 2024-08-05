@@ -1,18 +1,21 @@
-import json
+try:
+    import orjson as json
+except ImportError:
+    import json
 import enum
 
 from dataclasses import dataclass
 from typing import Dict, Iterable
 
 
-class HttpMethod(str, enum.Enum):
-    HEAD: str = 'head'
-    GET: str = 'get'
-    POST: str = 'post'
-    PUT: str = 'put'
-    PATCH: str = 'patch'
-    DELETE: str = 'delete'
-    COPY: str = 'copy'
+class HttpMethod(enum.StrEnum):
+    HEAD: str = "head"
+    GET: str = "get"
+    POST: str = "post"
+    PUT: str = "put"
+    PATCH: str = "patch"
+    DELETE: str = "delete"
+    COPY: str = "copy"
 
 
 @dataclass
@@ -27,7 +30,6 @@ class UniversalResponse:
 
 
 class EmptyResponse:
-
     @classmethod
     def load(cls, response: UniversalResponse):
         if not response.data:

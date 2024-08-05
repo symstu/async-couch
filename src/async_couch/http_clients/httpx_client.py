@@ -14,34 +14,32 @@ class HttpxCouchClient(BaseHttpClient, httpx.AsyncClient):
         return cls(base_url=couch_endpoint_url, **kwargs)
 
     @staticmethod
-    def prepare_request(endpoint: str,
-                        method: types.HttpMethod,
-                        path: Dict[str, str] = None,
-                        query: Dict[str, str] = None,
-                        headers: Dict[str, str] = None,
-                        data: bytes = None,
-                        json_data: dict = None) -> dict:
-        request = dict(
-            method=method,
-            url=endpoint.format(**path),
-            params=query
-        )
+    def prepare_request(
+        endpoint: str,
+        method: types.HttpMethod,
+        path: Dict[str, str] = None,
+        query: Dict[str, str] = None,
+        headers: Dict[str, str] = None,
+        data: bytes = None,
+        json_data: dict = None,
+    ) -> dict:
+        request = dict(method=method, url=endpoint.format(**path), params=query)
 
         if isinstance(json_data, dict):
-            request['json'] = json_data
+            request["json"] = json_data
         elif data:
-            request['data'] = data
+            request["data"] = data
 
         if headers:
-            request['headers'] = headers
+            request["headers"] = headers
 
         return request
 
     @staticmethod
     def to_universal_response(response: httpx.Response):
-        response.raise_for_status()
+        # response = response.raise_for_status()
         return types.UniversalResponse(
             status_code=response.status_code,
             headers=response.headers,
-            data=response.content
+            data=response.content,
         )
